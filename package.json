@@ -26,5 +26,9 @@
   "license": "MIT",
   "devDependencies": {
     "concurrently": "^8.2.2"
+  },
+  "dependencies": {
+    "@mui/material": "^7.3.0",
+    "@popperjs/core": "^2.11.8"
   }
 }
