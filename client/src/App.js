@@ -1,11 +1,9 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { 
-  ThemeProvider, 
-  createTheme, 
-  CssBaseline
-} from "@mui/material";
+import { ThemeProvider, createTheme, CssBaseline } from "@mui/material";
 import Dashboard from "./components/Dashboard";
+import RegistrationForm from "./components/RegistrationForm"; // Import the registration form component
+import UserTypeSelection from "./components/UserTypeSelection"; // Import the user type selection component
 
 const theme = createTheme({
   palette: {
@@ -30,8 +28,9 @@ const theme = createTheme({
   },
 });
 
-
 function App() {
+  const [userType, setUserType] = useState(null); // State to track user type (mentor or mentee)
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
