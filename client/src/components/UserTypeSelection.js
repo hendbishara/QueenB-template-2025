@@ -1,11 +1,11 @@
 import React from "react";
 import { Button, Box } from "@mui/material";
 
-// רכיב לבחירת סוג המשתמש (מנטורית / מנטית)
+// Component for selecting user type (mentor or mentee)
 const UserTypeSelection = ({ setUserType }) => {
   const userTypes = [
-    { label: "אני מנטורית", type: "mentor" },
-    { label: "אני מנטית", type: "mentee" },
+    { label: "I am a Mentor", type: "mentor" },
+    { label: "I am a Mentee", type: "mentee" },
   ];
 
   return (
@@ -16,7 +16,7 @@ const UserTypeSelection = ({ setUserType }) => {
           variant="contained"
           color={user.type === "mentor" ? "primary" : "secondary"}
           sx={{ marginRight: 2 }}
-          onClick={() => setUserType(user.type)}
+          onClick={() => setUserType(user.type)} // Update userType state when button is clicked
         >
           {user.label}
         </Button>
