@@ -12,3 +12,14 @@ VALUES
 (3, 'Python'),
 (3, 'Machine Learning'),
 (3, 'SQL');
+UPDATE users
+SET region = 'North'
+WHERE id = 1;
+
+UPDATE users
+SET region = 'Center'
+WHERE id = 2;
+
+UPDATE users
+SET region = 'South'
+WHERE id = 3;

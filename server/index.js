@@ -16,6 +16,7 @@ app.use(express.urlencoded({ extended: true }));
 //RONTEST
 // Routes
 app.use("/api/users", require("./routes/users"));
+app.use("/api/mentee", require("./routes/mentee"));
 
 // Health check endpoint
 app.get("/api/health", (req, res) => {

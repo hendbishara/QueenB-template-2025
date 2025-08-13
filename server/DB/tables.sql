@@ -20,6 +20,18 @@ CREATE TABLE mentor_skills (
     FOREIGN KEY (mentor_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
+CREATE TABLE mentorship_meetings (
+    mentee_id INT NOT NULL,
+    mentor_id INT NOT NULL,
+    meeting_date DATE NOT NULL,
+    approved TINYINT(1) NOT NULL DEFAULT 0,
+    PRIMARY KEY (mentee_id, mentor_id, meeting_date),
+    FOREIGN KEY (mentee_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (mentor_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+ALTER TABLE users
+ADD region VARCHAR(50) DEFAULT NULL AFTER phone;
 
 Drop Table mentor_skills;
 DROP TABLE users;
