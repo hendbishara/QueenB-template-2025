@@ -1,3 +1,4 @@
+
 INSERT INTO users (first_name, last_name, password, email, phone, short_description, image_url, linkedin_url, years_experience, mentor)
 VALUES
 ('Dana', 'Cohen', 'pass123', 'dana.cohen@example.com', '050-1111111', 'Full Stack Developer with a passion for teaching', NULL, 'https://linkedin.com/in/danacohen', 5, 1),
@@ -12,3 +13,14 @@ VALUES
 (3, 'Python'),
 (3, 'Machine Learning'),
 (3, 'SQL');
+UPDATE users
+SET region = 'North'
+WHERE id = 1;
+
+UPDATE users
+SET region = 'Center'
+WHERE id = 2;
+
+UPDATE users
+SET region = 'South'
+WHERE id = 3;

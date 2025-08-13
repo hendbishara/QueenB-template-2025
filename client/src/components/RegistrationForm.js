@@ -1,60 +1,63 @@
-import React, { useState } from "react";
-import { Button, Box, Typography, Grid, TextField } from "@mui/material";
-import "./RegistrationForm.css"; // ייבוא הקובץ CSS
+// import React from "react";
+// import { TextField, Button, Box } from "@mui/material";
 
-const RegistrationForm = ({ userType }) => {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    description: "",
-    technologies: "",
-    yearsOfExperience: "",
-    linkedIn: "",
-  });
+// const RegistrationForm = ({ userType }) => {
+//   return (
+//     <Box
+//       sx={{
+//         display: "flex",
+//         flexDirection: "column",
+//         alignItems: "center",
+//         marginTop: 2,
+//       }}
+//     >
+//       {/* Display different heading based on user type */}
+//       <h2>
+//         {userType === "mentor" ? "Mentor Registration" : "Mentee Registration"}
+//       </h2>
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
+//       {/* Render fields based on userType */}
+//       {userType === "mentor" ? (
+//         <>
+//           <TextField label="Name" variant="outlined" sx={{ marginBottom: 2 }} />
+//           <TextField
+//             label="Skills/Technologies"
+//             variant="outlined"
+//             sx={{ marginBottom: 2 }}
+//           />
+//           <TextField
+//             label="Years of Experience"
+//             variant="outlined"
+//             sx={{ marginBottom: 2 }}
+//           />
+//           <TextField
+//             label="LinkedIn Profile"
+//             variant="outlined"
+//             sx={{ marginBottom: 2 }}
+//           />
+//         </>
+//       ) : (
+//         <>
+//           <TextField label="Name" variant="outlined" sx={{ marginBottom: 2 }} />
+//           <TextField
+//             label="Email"
+//             variant="outlined"
+//             sx={{ marginBottom: 2 }}
+//           />
+//           <TextField
+//             label="Phone"
+//             variant="outlined"
+//             sx={{ marginBottom: 2 }}
+//           />
+//         </>
+//       )}
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log(formData);
-  };
+//       {/* Submit button */}
+//       <Button variant="contained" color="primary" sx={{ marginTop: 2 }}>
+//         Submit
+//       </Button>
+//     </Box>
+//   );
+// };
 
-  return (
-    <Box className="registration-container">
-      <Typography className="registration-title">
-        {userType === "mentor" ? "רישום כמנטורית" : "רישום כמנטית"}
-      </Typography>
-      <form onSubmit={handleSubmit} className="registration-form">
-        <Grid container spacing={2} justifyContent="center">
-          <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
-              label="Name"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              required
-            />
-          </Grid>
-          {/* שאר השדות */}
-        </Grid>
-        <Button
-          type="submit"
-          variant="contained"
-          color="primary"
-          className="registration-button"
-        >
-          Register
-        </Button>
-      </form>
-    </Box>
-  );
-};
-
-export default RegistrationForm;
+// export default RegistrationForm;
