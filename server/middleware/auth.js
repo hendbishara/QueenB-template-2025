@@ -35,7 +35,7 @@ function requireAuth(req, res, next) {
  * Optional role-based gate (e.g., mentor-only endpoints).
  */
 
-/*
+
 function requireRole(...roles) {
   return (req, res, next) => {
     if (!req.user) return res.status(401).json({ error: 'Unauthorized' });
@@ -45,6 +45,6 @@ function requireRole(...roles) {
     next();
   };
 }
-  */
+
 
 module.exports = { signToken, requireAuth, requireRole };

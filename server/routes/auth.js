@@ -21,7 +21,7 @@ const router = express.Router();
 //Rotem implementing, delete later or check if needed
 
 
-/* 
+
 router.post(
   '/register',
   [
@@ -88,7 +88,7 @@ router.post(
     }
   }
 );
-*/
+
 
 
 /**
