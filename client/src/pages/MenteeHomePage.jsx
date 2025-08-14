@@ -3,6 +3,7 @@ import axios from "axios";
 import {TextField, Box, Grid, Typography, CircularProgress ,Slider, Autocomplete, Chip } from "@mui/material";
 import MentorPreviewCard from "../components/MentorPreviewCard";
 import Navbar from "../components/Navbar";
+import ClearFiltersButton from "../components/ClearFiltersButton";
 
 const MenteeHomePage = () => {
     const [mentors, setMentors] = useState([]);
@@ -53,81 +54,112 @@ const MenteeHomePage = () => {
       const fullName = `${mentor.first_name} ${mentor.last_name}`.toLowerCase();
       return fullName.includes(searchTerm.toLowerCase());
     });
+    const clearFilters = () => {
+      setSearchTerm("");
+      setRegion("");
+      setExperience(0);
+      setSelectedSkills([]);
+      setSkills("");
+    };
+    
     return (
       <>
       <Navbar/>
-      <Box sx={{ p: 4 }}>
+      <Box sx={{
+            maxWidth: "1000px",
+            mx: 8,  
+            px: 4,
+            py: 4
+         
+      }} >
         <Typography variant="h4" gutterBottom>
           Find your Mentor
         </Typography>
-        <TextField
-          label="Search mentors by name"
-          variant="outlined"
-          fullWidth
-          margin="normal"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-        <Autocomplete
-          multiple
-          options={allSkills}
-          getOptionLabel={(option) => option}
-          value={selectedSkills}
-          onChange={(event, newValue) => {
-            setSelectedSkills(newValue);
-            setSkills(newValue.join(",")); // זה מה שנשלח ל־API
-          }}
-          renderTags={(value, getTagProps) =>
-            value.map((option, index) => (
-              <Chip
+        <Box sx={{width: 650 }} >
+          <TextField
+            label="Search mentors by name"
+            variant="outlined"
+            fullWidth
+            margin="normal"
+            value={searchTerm}
+            size="small"
+
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+
+          <Autocomplete
+            multiple
+            options={allSkills}
+            getOptionLabel={(option) => option}
+            value={selectedSkills}
+            size="small"
+            onChange={(event, newValue) => {
+              setSelectedSkills(newValue);
+              setSkills(newValue.join(",")); 
+            }}
+            renderTags={(value, getTagProps) =>
+              value.map((option, index) => (
+                <Chip
+                  variant="outlined"
+                  label={option}
+                  {...getTagProps({ index })}
+                />
+              ))
+            }
+            renderInput={(params) => (
+              <TextField
+                {...params}
                 variant="outlined"
-                label={option}
-                {...getTagProps({ index })}
-              />
-            ))
-          }
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              variant="outlined"
-              label="Skills"
-              placeholder="Choose skills"
-              margin="normal"
-            />
-          )}
-        />
-
-        <Box sx={{ width: 300 }}>
-        <TextField
-          label="Region"
-          select
-          fullWidth
-          margin="dense"
-          value={region}
-          onChange={(e) => setRegion(e.target.value)}
-          size="small"
-          SelectProps={{ native: true }}
-        >
-          <option value=""></option>
-          <option value="North">North</option>
-          <option value="Center">Center</option>
-          <option value="South">South</option>
-        </TextField>
-        </Box>
-
-        <Typography gutterBottom>Years of Experience</Typography>
-        <Box sx={{ width: 300 }}>
-          <Slider
-            value={Number(experience)}
-            onChange={(e, val) => setExperience(val)}
-            aria-labelledby="experience-slider"
-            valueLabelDisplay="auto"
-            step={1}
-            marks
-            min={0}
-            max={25}
+                label="Skills"
+                placeholder="Choose skills"
+                margin="normal"
+                />
+            )}
           />
         </Box>
+
+        <Box
+          sx={{
+            display: "flex",
+            gap: 10,
+            alignItems: "center",
+            flexWrap: "wrap",
+            mt: 2
+          }}
+        >
+          <Box sx={{ width: 300 }}>
+          <Autocomplete
+            options={["North", "Center", "South"]}
+            value={region}
+            onChange={(event, newValue) => {
+              setRegion(newValue || "");
+            }}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Region"
+                margin="normal"
+                variant="outlined"
+                size="small"
+              />
+            )}
+          />
+            <Typography gutterBottom >Years of Experience</Typography>
+            <Slider
+              value={Number(experience)}
+              onChange={(e, val) => setExperience(val)}
+              aria-labelledby="experience-slider"
+              valueLabelDisplay="auto"
+              step={1}
+              marks
+              min={0}
+              max={25}
+              margin="normal"
+
+            />
+          </Box>
+        </Box>
+        <ClearFiltersButton onClear={clearFilters}  />
         {loading ? (
           <Box display="flex" justifyContent="center" mt={4}>
             <CircularProgress />
@@ -141,6 +173,7 @@ const MenteeHomePage = () => {
             ))}
           </Grid>
         )}
+
       </Box>
     </>
       );
