@@ -45,15 +45,49 @@ function toMentorDetail(row) {
     };
   }
 
-  async function listAllMentors() {
-    const sql = `
-      SELECT id, first_name, last_name, email, phone, image_url, linkedin_url
-      FROM users
-      WHERE mentor = 1`;
+  async function listAllMentors(filters = {}) {
+    const { name, region, skills, experience } = filters;
+    const conditions = ["u.mentor = 1"];
+    const params = [];
   
-    const [rows] = await pool.execute(sql); // בלי params בכלל
+    if (name) {
+      conditions.push("(u.first_name LIKE ? OR u.last_name LIKE ?)");
+      const likeName = `%${name}%`;
+      params.push(likeName, likeName);
+    }
+  
+    if (region) {
+      conditions.push("u.region = ?");
+      params.push(region);
+    }
+  
+    if (experience) {
+      conditions.push("u.years_experience >= ?");
+      params.push(Number(experience));
+    }
+  
+    let sql = `
+      SELECT DISTINCT u.id, u.first_name, u.last_name, u.email, u.phone, u.image_url, u.linkedin_url
+      FROM users u
+      LEFT JOIN mentor_skills ms ON ms.mentor_id = u.id
+    `;
+  
+    if (skills) {
+      const skillList = skills.split(',').map(s => s.trim());
+      const placeholders = skillList.map(() => '?').join(',');
+      conditions.push(`ms.skill_name IN (${placeholders})`);
+      params.push(...skillList);
+    }
+  
+    if (conditions.length) {
+      sql += " WHERE " + conditions.join(" AND ");
+    }
+  
+    const [rows] = await pool.execute(sql, params);
     return rows.map(toMentorPreview);
   }
+  
+  
 
 async function getMentorById(id) {
     const [rows] = await pool.query(

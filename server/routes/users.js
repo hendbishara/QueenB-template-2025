@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { listAllMentors, createMentorshipMeeting, getProfile} = require("../services/usersService");
+const pool = require("../pool_db/pool");
 
 // GET /api/users - Get all users
 // router.get("/", (req, res) => {
@@ -15,7 +16,7 @@ router.get("/mentee/home", async (req, res, next) => {
     page = Math.max(Number(page) || 1, 1);
     pageSize = Math.max(Number(pageSize) || 12, 1);
     
-    const result = await listAllMentors();
+    const result = await listAllMentors({ name, region, skills, experience });
     res.json(result);
   } catch (err) {
     next(err);
@@ -45,6 +46,18 @@ router.get("/mentee/profile", async (req, res, next) => {
     const menteeId = req.user.id; // token - mentee
     const profile = await getProfile(menteeId);
     res.json(profile);
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.get("/skills", async (req, res, next) => {
+  try {
+    const [rows] = await pool.query(
+      "SELECT DISTINCT skill_name FROM mentor_skills ORDER BY skill_name"
+    );
+    const skills = rows.map((row) => row.skill_name);
+    res.json(skills);
   } catch (err) {
     next(err);
   }
