@@ -5,7 +5,9 @@ import {
   createTheme, 
   CssBaseline
 } from "@mui/material";
-import Dashboard from "./components/Dashboard";
+
+import Dashboard from "./components/Dashboard"; 
+import MenteeHomePage from "./pages/MenteeHomePage";
 
 const theme = createTheme({
   palette: {
@@ -30,7 +32,6 @@ const theme = createTheme({
   },
 });
 
-
 function App() {
   return (
     <ThemeProvider theme={theme}>
@@ -38,6 +39,7 @@ function App() {
       <Router>
         <Routes>
           <Route path="/" element={<Dashboard />} />
+          <Route path="/mentee/home" element={<MenteeHomePage />} />
         </Routes>
       </Router>
     </ThemeProvider>

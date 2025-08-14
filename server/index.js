@@ -16,7 +16,6 @@ app.use(express.urlencoded({ extended: true }));
 //RONTEST
 // Routes
 app.use("/api/users", require("./routes/users"));
-app.use("/api/mentee", require("./routes/mentee"));
 
 // Health check endpoint
 app.get("/api/health", (req, res) => {
@@ -35,7 +34,11 @@ app.get("/", (req, res) => {
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).json({ error: "Something went wrong!" });
+  res.status(500).json({ 
+    error: "Something went wrong!",
+    message: err.message,
+    stack: err.stack    
+  });
 });
 
 // 404 handler
