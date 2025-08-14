@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import {TextField, Box, Grid, Typography, CircularProgress } from "@mui/material";
 import MentorPreviewCard from "../components/MentorPreviewCard";
+import Navbar from "../components/Navbar";
 
 const MenteeHomePage = () => {
     const [mentors, setMentors] = useState([]);
@@ -25,8 +26,10 @@ const MenteeHomePage = () => {
     const filteredMentors = mentors.filter((mentor) => {
       const fullName = `${mentor.first_name} ${mentor.last_name}`.toLowerCase();
       return fullName.includes(searchTerm.toLowerCase());
-    }, [searchTerm]);
+    });
     return (
+      <>
+      <Navbar/>
       <Box sx={{ p: 4 }}>
         <Typography variant="h4" gutterBottom>
           Find your Mentor
@@ -53,6 +56,7 @@ const MenteeHomePage = () => {
           </Grid>
         )}
       </Box>
+    </>
       );
 
 };  

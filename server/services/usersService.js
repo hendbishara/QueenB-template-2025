@@ -15,7 +15,8 @@ function toMenteeDetail(row) {
         linkedin_url: row.linkedin_url,
         phone: row.phone,
         email: row.email,
-        short_description: row.short_description
+        short_description: row.short_description,
+        role: row.mentor ? "mentor" : "mentee"
     };
 }
 function toMentorPreview(row) {
@@ -87,7 +88,8 @@ async function getProfile(id){
             u.linkedin_url,
             u.phone,
             u.email,
-            u.short_description
+            u.short_description,
+            u.mentor
          FROM users u
          WHERE u.mentor = 0 AND u.id = ?`,
         [id]
