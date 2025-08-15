@@ -88,29 +88,30 @@ export default function Login() {
           <CardContent sx={{ p: 4 }}>
             {/* [8] Small “brand” header area */}
             <Box sx={{ textAlign: "center", mb: 2 }}>
-              <Box
-                sx={{
-                  width: 56,
-                  height: 56,
-                  borderRadius: "50%",
-                  bgcolor: "secondary.light",
-                  color: "white",
-                  display: "grid",
-                  placeItems: "center",
-                  mx: "auto",
-                  mb: 1.5,
-                }}
-                aria-hidden
-              >
-                <LockOutlined />
-              </Box>
-              <Typography variant="h5" fontWeight={700}>
-                Welcome back
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                Sign in to Queens Match
-              </Typography>
-            </Box>
+    {/* NEW: QueenB logo above the lock */}
+    <Box
+        component="img"
+        src="https://queenb.org.il/wp-content/uploads/2023/08/rainbow-1.png"
+        alt="QueenB logo"
+        sx={{
+        width: 100,                  // adjust size to taste (e.g., 80–120)
+        height: 100,
+        objectFit: "contain",
+        mx: "auto",
+        mb: 1.5,                    // spacing below the logo
+        display: "block",
+        filter: "drop-shadow(0 4px 12px rgba(0,0,0,.12))" // subtle depth (optional)
+        }}
+    />
+
+    <Typography variant="h5" fontWeight={700}>
+        Welcome to mentors and mentees matching
+    </Typography>
+    <Typography variant="body2" color="text.secondary">
+        Sign in to Queens Match
+    </Typography>
+    </Box>
+
 
             {/* [9] The form itself */}
             <Box component="form" onSubmit={handleSubmit} sx={{ display: "grid", gap: 2 }}>
