@@ -4,7 +4,7 @@ import EmailButton from "./EmailButton";
 import PhoneButton from "./PhoneButton";
 import LinkedInButton from "./LinkedInButton";
 
-const MentorPreviewCard = ({ mentor }) => {
+const MentorPreviewCard = ({ mentor, onClickImage}) => {
   return (
     <Card sx={{ maxWidth: 300, m: "auto", p: 2 }}>
       <CardMedia
@@ -12,6 +12,8 @@ const MentorPreviewCard = ({ mentor }) => {
         height="180"
         image={mentor.image_url || "https://via.placeholder.com/300x180?text=Mentor"}
         alt={`${mentor.first_name} ${mentor.last_name}`}
+        sx={{ cursor: "pointer" }}
+        onClick={onClickImage}
       />
       <CardContent>
         <Typography variant="h6" component="div" align="center">
@@ -29,6 +31,7 @@ const MentorPreviewCard = ({ mentor }) => {
           <PhoneButton phone={mentor.phone} />
           <LinkedInButton url={mentor.linkedin_url} />
         </Box>
+  
       </CardContent>
     </Card>
   );

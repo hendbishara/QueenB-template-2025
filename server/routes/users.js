@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { listAllMentors, createMentorshipMeeting, getProfile} = require("../services/usersService");
+const { listAllMentors, createMentorshipMeeting, getProfile, getMentorById } = require("../services/usersService");
 const pool = require("../pool_db/pool");
 
 // GET /api/users - Get all users
@@ -63,4 +63,18 @@ router.get("/skills", async (req, res, next) => {
   }
 });
 
+
+// GET /api/users/mentors/:id
+router.get("/mentors/:id", async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    const mentor = await getMentorById(id);
+    if (!mentor) {
+      return res.status(404).json({ error: "Mentor not found" });
+    }
+    res.json(mentor);
+  } catch (err) {
+    next(err);
+  }
+});
 module.exports = router;

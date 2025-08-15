@@ -4,6 +4,7 @@ import {TextField, Box, Grid, Typography, CircularProgress ,Slider, Autocomplete
 import MentorPreviewCard from "../components/MentorPreviewCard";
 import Navbar from "../components/Navbar";
 import ClearFiltersButton from "../components/ClearFiltersButton";
+import MentorFullCard from "../components/MentorFullCard";
 
 const MenteeHomePage = () => {
     const [mentors, setMentors] = useState([]);
@@ -14,7 +15,10 @@ const MenteeHomePage = () => {
     const [skills, setSkills] = useState("");
     const [selectedSkills, setSelectedSkills] = useState([]);
     const [allSkills, setAllSkills] = useState([]);
-
+    const [selectedMentor, setSelectedMentor] = useState(null);
+    const [showFullCard, setShowFullCard] = useState(false);
+    
+    
     useEffect(() => {
       const fetchMentors = async () => {
         setLoading(true);
@@ -60,6 +64,20 @@ const MenteeHomePage = () => {
       setExperience(0);
       setSelectedSkills([]);
       setSkills("");
+    };
+    const openMentorCard = async (mentorPreview) => {
+      try {
+        const response = await axios.get(`/api/users/mentors/${mentorPreview.id}`);
+        setSelectedMentor(response.data);
+        setShowFullCard(true);
+      } catch (err) {
+        console.error("Error loading mentor detail:", err);
+      }
+    };
+    
+    const closeMentorCard = () => {
+      setShowFullCard(false);
+      setSelectedMentor(null);
     };
     
     return (
@@ -168,15 +186,21 @@ const MenteeHomePage = () => {
           <Grid container spacing={3}>
               {filteredMentors.map((mentor) => (
                 <Grid item xs={12} sm={6} md={4} key={mentor.id}>
-                  <MentorPreviewCard mentor={mentor} />
+                  <MentorPreviewCard mentor={mentor} onClickImage={() => openMentorCard(mentor)} />
                 </Grid>
             ))}
           </Grid>
         )}
 
       </Box>
+      <MentorFullCard
+        open={showFullCard}
+        onClose={closeMentorCard}
+        mentor={selectedMentor}
+      />
     </>
-      );
+    
+  );
 
 };  
 
