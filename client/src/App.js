@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { 
   ThemeProvider, 
   createTheme, 
@@ -35,19 +35,6 @@ const theme = createTheme({
 });
 
 
-function App() {
-  return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <Router>
-        <Routes>
-          <Route path="/" element={<Dashboard />} />
-        </Routes>
-      </Router>
-    </ThemeProvider>
-  );
-}
-
 
 function App() {
   return (
@@ -76,7 +63,7 @@ function App() {
         </Router>
       </AuthProvider>
     </ThemeProvider>
-  );
+);
 }
 
 export default App;
