@@ -104,7 +104,7 @@ export default function Login() {
         }}
     />
 
-    <Typography variant="h5" fontWeight={700}>
+    <Typography variant="h5" className="sparkleText" sx={{ mb: 0.5 }}>
         Welcome to mentors and mentees matching
     </Typography>
     <Typography variant="body2" color="text.secondary">
