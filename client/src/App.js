@@ -7,6 +7,10 @@ import {
 } from "@mui/material";
 import Dashboard from "./components/Dashboard";
 
+import Login from "./pages/Login";
+import ProtectedRoute from "./auth/ProtectedRoute";
+import { AuthProvider } from "./auth/AuthContext";
+
 const theme = createTheme({
   palette: {
     primary: {
@@ -40,6 +44,37 @@ function App() {
           <Route path="/" element={<Dashboard />} />
         </Routes>
       </Router>
+    </ThemeProvider>
+  );
+}
+
+
+function App() {
+  return (
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      {/* AuthProvider wraps the whole app so any page can read auth state */}
+      <AuthProvider>
+        <Router>
+          <Routes>
+            {/* Public route: anyone can access */}
+            <Route path="/login" element={<Login />} />
+
+            {/* Private route: only logged-in users can access */}
+            <Route
+              path="/"
+              element={
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Fallback: unknown paths -> go “home” (which is protected) */}
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </Router>
+      </AuthProvider>
     </ThemeProvider>
   );
 }
