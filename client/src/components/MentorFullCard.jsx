@@ -1,10 +1,13 @@
-import React from "react";
-import { Dialog, DialogTitle, DialogContent, Typography, Box, Avatar, Chip, Stack } from "@mui/material";
+import React, { useState } from "react";
+import { Dialog, DialogTitle, DialogContent, Typography, Box, Avatar, Chip, Stack , Button} from "@mui/material";
 import EmailButton from "./EmailButton";
 import PhoneButton from "./PhoneButton";
 import LinkedInButton from "./LinkedInButton";
+import ScheduleMeeting from "./ScheduleMeeting";
 
-const MentorFullCard = ({ open, onClose, mentor }) => {
+const MentorFullCard = ({ open, onClose, mentor, menteeId = 2  }) => {
+  const [showSchedule, setShowSchedule] = useState(false);
+
   if (!mentor) return null;
 
   return (
@@ -31,6 +34,21 @@ const MentorFullCard = ({ open, onClose, mentor }) => {
             <EmailButton email={mentor.email} />
             <PhoneButton phone={mentor.phone} />
             <LinkedInButton url={mentor.linkedin_url} />
+          </Box>
+          <Box mt={3}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => setShowSchedule((prev) => !prev)}
+            >
+              {showSchedule ? "Hide Scheduler" : "Schedule Meeting"}
+            </Button>
+
+            {showSchedule && (
+              <Box mt={4} width="100%">
+                <ScheduleMeeting mentorId={mentor.id} />
+              </Box>
+            )}
           </Box>
         </Box>
       </DialogContent>

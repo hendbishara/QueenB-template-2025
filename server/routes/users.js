@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { listAllMentors, createMentorshipMeeting, getProfile, getMentorById, getLessonsByMenteeId , getUpcomingLessons, getPendingLessons} = require("../services/usersService");
+const { listAllMentors, createMentorshipMeeting, getProfile, getMentorById, getLessonsByMenteeId , getUpcomingLessons, getPendingLessons, getUnavailableSlotsForMentor} = require("../services/usersService");
 const pool = require("../pool_db/pool");
 
 // GET /api/users - Get all users
@@ -26,14 +26,14 @@ router.get("/mentee/home", async (req, res, next) => {
 // POST /api/users/mentee/home
 router.post("/mentee/home", async (req, res, next) => {
   try {
-    const { mentorId, meetingDate } = req.body;
+    const { mentorId, meetingDate, meeting_time } = req.body;
     //const menteeId = req.user.id; // token
     const menteeId = 2;
-    if (!mentorId || !meetingDate) {
+    if (!mentorId || !meetingDate || !meeting_time) {
       return res.status(400).json({ error: "Missing mentorId or meetingDate" });
     }
 
-    const result = await createMentorshipMeeting(menteeId, mentorId, meetingDate);
+    const result = await createMentorshipMeeting(menteeId, mentorId, meetingDate, meeting_time);
     res.json(result);
   } catch (err) {
     next(err);
@@ -108,4 +108,15 @@ router.get("/mentee/:id/pending-lessons", async (req, res, next) => {
     next(err);
   }
 });
+
+router.get("/mentors/:id/unavailable-slots", async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const slots = await getUnavailableSlotsForMentor(id);
+    res.json(slots);
+  } catch (err) {
+    next(err);
+  }
+});
+
 module.exports = router;

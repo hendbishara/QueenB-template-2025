@@ -135,18 +135,18 @@ async function getProfile(id){
   return toMenteeDetail(rows[0]);
 }
 
-async function createMentorshipMeeting(menteeId, mentorId, meetingDate) {
-    const query = `
-      INSERT INTO mentorship_meetings (mentee_id, mentor_id, meeting_date)
-      VALUES (?, ?, ?)`;
-    try {
-        await pool.query(query, [menteeId, mentorId, meetingDate]);
-        return { success: true, message: "Meeting scheduled successfully" };
-    } catch (err) {
-      console.error("Error inserting meeting:", err);
-      throw new Error("Could not schedule meeting");
-    }
-}    
+async function createMentorshipMeeting(menteeId, mentorId, meetingDate, meetingTime) {
+  const query = `
+    INSERT INTO mentorship_meetings (mentee_id, mentor_id, meeting_date, meeting_time)
+    VALUES (?, ?, ?, ?)`;
+  try {
+    await pool.query(query, [menteeId, mentorId, meetingDate, meetingTime]);
+    return { success: true, message: "Meeting scheduled successfully" };
+  } catch (err) {
+    console.error("Error inserting meeting:", err);
+    throw new Error("Could not schedule meeting");
+  }
+}
 
 async function getLessonsByMenteeId(menteeId) {
   const [rows] = await pool.query(
@@ -194,5 +194,17 @@ async function getPendingLessons(menteeId) {
   const [rows] = await pool.query(query, [menteeId]);
   return rows;
 }
-module.exports = {listAllMentors, getMentorById, getProfile, createMentorshipMeeting,getLessonsByMenteeId, getUpcomingLessons, getPendingLessons };
+
+async function getUnavailableSlotsForMentor(mentorId) {
+  const [rows] = await pool.query(
+    `
+    SELECT meeting_date, meeting_time
+    FROM mentorship_meetings
+    WHERE mentor_id = ?
+    `,
+    [mentorId]
+  );
+  return rows;
+}
+module.exports = {listAllMentors, getMentorById, getProfile, createMentorshipMeeting,getLessonsByMenteeId, getUpcomingLessons, getPendingLessons, getUnavailableSlotsForMentor };
 
