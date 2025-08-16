@@ -33,5 +33,8 @@ CREATE TABLE mentorship_meetings (
 ALTER TABLE users
 ADD region VARCHAR(50) DEFAULT NULL AFTER phone;
 
+ALTER TABLE mentorship_meetings
+ADD meeting_time TIME AFTER meeting_date;
+
 Drop Table mentor_skills;
 DROP TABLE users;

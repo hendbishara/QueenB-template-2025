@@ -153,7 +153,8 @@ async function getLessonsByMenteeId(menteeId) {
     `
     SELECT 
       u.first_name AS mentor_name,
-      mm.meeting_date
+      mm.meeting_date,
+      mm.meeting_time
     FROM mentorship_meetings mm
     JOIN users u ON mm.mentor_id = u.id
     WHERE mm.mentee_id = ? AND mm.meeting_date < CURDATE() AND mm.approved = 1
@@ -168,7 +169,8 @@ async function getUpcomingLessons(menteeId) {
   const query = `
     SELECT 
       u.first_name AS mentor_name,
-      mm.meeting_date
+      mm.meeting_date,
+      mm.meeting_time
     FROM mentorship_meetings mm
     JOIN users u ON mm.mentor_id = u.id
     WHERE mm.mentee_id = ? AND mm.meeting_date >= CURDATE() AND mm.approved = 1
@@ -182,7 +184,8 @@ async function getPendingLessons(menteeId) {
   const query = `
     SELECT 
       u.first_name AS mentor_name,
-      mm.meeting_date
+      mm.meeting_date,
+      mm.meeting_time
     FROM mentorship_meetings mm
     JOIN users u ON mm.mentor_id = u.id
     WHERE mm.mentee_id = ? AND mm.approved = 0

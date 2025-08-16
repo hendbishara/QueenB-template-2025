@@ -42,11 +42,19 @@ const Lessons = ({ menteeId, apiPath, emptyMessage }) => {
               <Typography variant="h6" gutterBottom>
                 Mentor: {lesson.mentor_name}
               </Typography>
+
               <Box display="flex" alignItems="center" gap={1}>
                 <EventIcon fontSize="small" />
-                <Typography variant="body2" color="text.secondary">
-                  {new Date(lesson.meeting_date).toLocaleDateString()}
-                </Typography>
+                <Box>
+                  <Typography variant="body2" color="text.secondary">
+                    {new Date(lesson.meeting_date).toLocaleDateString()}
+                  </Typography>
+                  {lesson.meeting_time && (
+                    <Typography variant="body2" color="text.secondary">
+                      Time: {lesson.meeting_time.slice(0, 5)} {/* HH:MM */}
+                    </Typography>
+                  )}
+                </Box>
               </Box>
             </CardContent>
           </Card>
