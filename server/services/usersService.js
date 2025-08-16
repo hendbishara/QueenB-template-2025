@@ -156,7 +156,7 @@ async function getLessonsByMenteeId(menteeId) {
       mm.meeting_date
     FROM mentorship_meetings mm
     JOIN users u ON mm.mentor_id = u.id
-    WHERE mm.mentee_id = ?
+    WHERE mm.mentee_id = ? AND mm.meeting_date < CURDATE() AND mm.approved = 1
     ORDER BY mm.meeting_date DESC
     `,
     [menteeId]
@@ -171,12 +171,25 @@ async function getUpcomingLessons(menteeId) {
       mm.meeting_date
     FROM mentorship_meetings mm
     JOIN users u ON mm.mentor_id = u.id
-    WHERE mm.mentee_id = ? AND mm.meeting_date > CURDATE()
+    WHERE mm.mentee_id = ? AND mm.meeting_date >= CURDATE() AND mm.approved = 1
     ORDER BY mm.meeting_date ASC
   `;
   const [rows] = await pool.query(query, [menteeId]);
   return rows;
 }
 
-module.exports = {listAllMentors, getMentorById, getProfile, createMentorshipMeeting,getLessonsByMenteeId, getUpcomingLessons };
+async function getPendingLessons(menteeId) {
+  const query = `
+    SELECT 
+      u.first_name AS mentor_name,
+      mm.meeting_date
+    FROM mentorship_meetings mm
+    JOIN users u ON mm.mentor_id = u.id
+    WHERE mm.mentee_id = ? AND mm.approved = 0
+    ORDER BY mm.meeting_date ASC
+  `;
+  const [rows] = await pool.query(query, [menteeId]);
+  return rows;
+}
+module.exports = {listAllMentors, getMentorById, getProfile, createMentorshipMeeting,getLessonsByMenteeId, getUpcomingLessons, getPendingLessons };
 

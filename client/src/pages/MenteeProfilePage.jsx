@@ -141,6 +141,8 @@ const MenteeProfilePage = () => {
   >
   <Tab label="Past Meetings" />
   <Tab label="Upcoming Meetings" />
+  <Tab label="Pending Meetings" />
+
     </Tabs>
 
     <Divider sx={{ my: 2 }} />
@@ -157,6 +159,13 @@ const MenteeProfilePage = () => {
       menteeId={mentee.id}
       apiPath="upcoming-lessons"
       emptyMessage="No upcoming lessons found."
+    />
+  )}
+  {activeTab === 2 && (
+    <Lessons
+      menteeId={mentee.id}
+      apiPath="pending-lessons"
+      emptyMessage="No pending lessons found."
     />
   )}
 </Box>

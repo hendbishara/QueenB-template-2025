@@ -36,3 +36,6 @@ VALUES (2, 3, DATE_SUB(CURDATE(), INTERVAL 6 DAY), 1);
 
 INSERT INTO mentorship_meetings (mentee_id, mentor_id, meeting_date)
 VALUES (2, 1, DATE_ADD(CURDATE(), INTERVAL 5 DAY));
+
+INSERT INTO mentorship_meetings (mentee_id, mentor_id, meeting_date,approved)
+VALUES (2, 3, DATE_ADD(CURDATE(), INTERVAL 3 DAY),1);
