@@ -139,17 +139,25 @@ const MenteeProfilePage = () => {
     onChange={(e, newValue) => setActiveTab(newValue)}
     centered
   >
-    <Tab label="Past Lessons" />
-    <Tab label="Upcoming Lessons" />
-  </Tabs>
+  <Tab label="Past Meetings" />
+  <Tab label="Upcoming Meetings" />
+    </Tabs>
 
-  <Divider sx={{ my: 2 }} />
+    <Divider sx={{ my: 2 }} />
 
-  {activeTab === 0 && <Lessons menteeId={mentee.id} />}
+    {activeTab === 0 && (
+    <Lessons
+      menteeId={mentee.id}
+      apiPath="lessons"
+      emptyMessage="No past lessons found."
+    />
+  )} 
   {activeTab === 1 && (
-    <Typography align="center" mt={2}>
-      Upcoming lessons will be displayed here.
-    </Typography>
+    <Lessons
+      menteeId={mentee.id}
+      apiPath="upcoming-lessons"
+      emptyMessage="No upcoming lessons found."
+    />
   )}
 </Box>
 

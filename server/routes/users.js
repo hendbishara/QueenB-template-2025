@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { listAllMentors, createMentorshipMeeting, getProfile, getMentorById, getLessonsByMenteeId } = require("../services/usersService");
+const { listAllMentors, createMentorshipMeeting, getProfile, getMentorById, getLessonsByMenteeId , getUpcomingLessons} = require("../services/usersService");
 const pool = require("../pool_db/pool");
 
 // GET /api/users - Get all users
@@ -83,6 +83,16 @@ router.get("/mentee/:id/lessons", async (req, res, next) => {
   try {
     const { id } = req.params;
     const lessons = await getLessonsByMenteeId(id);
+    res.json(lessons);
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.get("/mentee/:id/upcoming-lessons", async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const lessons = await getUpcomingLessons(id);
     res.json(lessons);
   } catch (err) {
     next(err);

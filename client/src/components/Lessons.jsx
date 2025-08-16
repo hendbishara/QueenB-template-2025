@@ -10,14 +10,14 @@ import {
 } from "@mui/material";
 import EventIcon from "@mui/icons-material/Event";
 
-const Lessons = ({ menteeId }) => {
+const Lessons = ({ menteeId, apiPath, emptyMessage }) => {
   const [lessons, setLessons] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchLessons = async () => {
       try {
-        const response = await axios.get(`/api/users/mentee/${menteeId}/lessons`);
+        const response = await axios.get(`/api/users/mentee/${menteeId}/${apiPath}`);
         setLessons(response.data);
       } catch (error) {
         console.error("Error fetching lessons:", error);
@@ -27,17 +27,17 @@ const Lessons = ({ menteeId }) => {
     };
 
     fetchLessons();
-  }, [menteeId]);
+  }, [menteeId, apiPath]);
 
   if (loading) return <CircularProgress />;
   if (lessons.length === 0)
-    return <Typography align="center">No lessons found.</Typography>;
+    return <Typography align="center">{emptyMessage}</Typography>;
 
   return (
     <Grid container spacing={2} justifyContent="center">
       {lessons.map((lesson, index) => (
         <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
-        <Card elevation={3}>
+          <Card elevation={3}>
             <CardContent>
               <Typography variant="h6" gutterBottom>
                 Mentor: {lesson.mentor_name}
