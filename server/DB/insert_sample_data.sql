@@ -23,3 +23,12 @@ WHERE id = 2;
 UPDATE users
 SET region = 'South'
 WHERE id = 3;
+
+INSERT INTO mentorship_meetings (mentee_id, mentor_id, meeting_date, approved)
+VALUES (2, 1, DATE_SUB(CURDATE(), INTERVAL 1 DAY), 1);
+
+INSERT INTO mentorship_meetings (mentee_id, mentor_id, meeting_date, approved)
+VALUES (2, 3, DATE_SUB(CURDATE(), INTERVAL 2 DAY), 1);
+
+INSERT INTO mentorship_meetings (mentee_id, mentor_id, meeting_date, approved)
+VALUES (2, 3, DATE_SUB(CURDATE(), INTERVAL 6 DAY), 1);

@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { listAllMentors, createMentorshipMeeting, getProfile, getMentorById } = require("../services/usersService");
+const { listAllMentors, createMentorshipMeeting, getProfile, getMentorById, getLessonsByMenteeId } = require("../services/usersService");
 const pool = require("../pool_db/pool");
 
 // GET /api/users - Get all users
@@ -43,7 +43,8 @@ router.post("/mentee/home", async (req, res, next) => {
 // GET /api/users/mentee/profile
 router.get("/mentee/profile", async (req, res, next) => {
   try {
-    const menteeId = req.user.id; // token - mentee
+    const menteeId = 2;//hard coded
+    // const menteeId = req.user.id; // token - mentee
     const profile = await getProfile(menteeId);
     res.json(profile);
   } catch (err) {
@@ -77,4 +78,15 @@ router.get("/mentors/:id", async (req, res, next) => {
     next(err);
   }
 });
+
+router.get("/mentee/:id/lessons", async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const lessons = await getLessonsByMenteeId(id);
+    res.json(lessons);
+  } catch (err) {
+    next(err);
+  }
+});
+
 module.exports = router;

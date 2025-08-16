@@ -7,18 +7,20 @@
 const pool = require("../pool_db/pool");
 
 function toMenteeDetail(row) {
-    return {
-        id: row.id,
-        first_name: row.first_name,
-        last_name: row.last_name,
-        image_url: row.image_url,
-        linkedin_url: row.linkedin_url,
-        phone: row.phone,
-        email: row.email,
-        short_description: row.short_description,
-        role: row.mentor ? "mentor" : "mentee"
-    };
+  return {
+      id: row.id,
+      first_name: row.first_name,
+      last_name: row.last_name,
+      image_url: row.image_url,
+      linkedin_url: row.linkedin_url,
+      phone: row.phone,
+      email: row.email,
+      short_description: row.short_description,
+      region: row.region,
+      role: row.mentor ? "mentor" : "mentee"
+  };
 }
+
 function toMentorPreview(row) {
   return {
     id: row.id,
@@ -113,23 +115,24 @@ async function getMentorById(id) {
 }
   
 async function getProfile(id){
-    const [rows] = await pool.query(
-        `SELECT 
-            u.id,
-            u.first_name,
-            u.last_name,
-            u.image_url,
-            u.linkedin_url,
-            u.phone,
-            u.email,
-            u.short_description,
-            u.mentor
-         FROM users u
-         WHERE u.mentor = 0 AND u.id = ?`,
-        [id]
-    );
-    if (rows.length === 0) return null;
-    return toMenteeDetail(rows[0]);
+  const [rows] = await pool.query(
+      `SELECT 
+          u.id,
+          u.first_name,
+          u.last_name,
+          u.image_url,
+          u.linkedin_url,
+          u.phone,
+          u.email,
+          u.short_description,
+          u.mentor,
+          u.region
+       FROM users u
+       WHERE u.mentor = 0 AND u.id = ?`,
+      [id]
+  );
+  if (rows.length === 0) return null;
+  return toMenteeDetail(rows[0]);
 }
 
 async function createMentorshipMeeting(menteeId, mentorId, meetingDate) {
@@ -144,5 +147,22 @@ async function createMentorshipMeeting(menteeId, mentorId, meetingDate) {
       throw new Error("Could not schedule meeting");
     }
 }    
-module.exports = {listAllMentors, getMentorById, getProfile, createMentorshipMeeting };
+
+async function getLessonsByMenteeId(menteeId) {
+  const [rows] = await pool.query(
+    `
+    SELECT 
+      u.first_name AS mentor_name,
+      mm.meeting_date
+    FROM mentorship_meetings mm
+    JOIN users u ON mm.mentor_id = u.id
+    WHERE mm.mentee_id = ?
+    ORDER BY mm.meeting_date DESC
+    `,
+    [menteeId]
+  );
+  return rows;
+}
+
+module.exports = {listAllMentors, getMentorById, getProfile, createMentorshipMeeting,getLessonsByMenteeId };
 
