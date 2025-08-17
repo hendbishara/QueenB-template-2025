@@ -11,7 +11,15 @@ import {
 } from "@mui/material";
 import EventIcon from "@mui/icons-material/Event";
 
-  const Lessons = ({ userId, role = "mentee", apiPath, emptyMessage, showApproveButton = false, onApprove ,  refresh = 0}) => {
+const Lessons = ({
+  userId,
+  role = "mentee",
+  apiPath,
+  emptyMessage,
+  showApproveButton = false,
+  onApprove,
+  refresh = 0,
+}) => {
   const [lessons, setLessons] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -41,56 +49,55 @@ import EventIcon from "@mui/icons-material/Event";
   return (
     <Grid container spacing={2} justifyContent="center">
       {lessons.map((lesson, index) => (
-        <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
-          <Card elevation={3}>
-          <CardContent>
-  <Box display="flex" justifyContent="space-between" alignItems="center">
-    <Box>
-      <Typography variant="h6" gutterBottom>
-        {role === "mentee"
-          ? `Mentor: ${lesson.mentor_name}`
-          : `Mentee: ${lesson.mentee_first_name} ${lesson.mentee_last_name}`}
-      </Typography>
-
-      <Box display="flex" alignItems="center" gap={1}>
-        <EventIcon fontSize="small" />
-        <Box>
-          <Typography variant="body2" color="text.secondary">
-            {new Date(lesson.meeting_date).toLocaleDateString()}
-          </Typography>
-          {lesson.meeting_time && (
-            <Typography variant="body2" color="text.secondary">
-              Time: {lesson.meeting_time.slice(0, 5)}
-            </Typography>
-          )}
-        </Box>
-      </Box>
-    </Box>
-
-    {showApproveButton && (
-      <Button
-        variant="contained"
-        color="primary"
-        size="small"
-        onClick={() => {
-          const dateOnly = lesson.meeting_date.slice(0, 10);
-          console.log("Clicked Approve for", { ...lesson, meeting_date: dateOnly });
-
-          onApprove(lesson.mentee_id, lesson.meeting_date, lesson.meeting_time);
-        }}        
-      >
-        Approve
-      </Button>
-    )}
-  </Box>
-
-              <Box display="flex" alignItems="center" gap={1}>
+        <Grid item key={index}>
+          <Card elevation={3} sx={{ width: 350, minHeight: 140, px: 2, py: 1.5 }}>
+            <CardContent>
+              <Box display="flex" justifyContent="space-between" alignItems="center">
                 <Box>
-                  {lesson.meeting_time && (
-                    <Typography variant="body2" color="text.secondary">
-                    </Typography>
-                  )}
+                  <Typography variant="subtitle1" gutterBottom>
+                    {role === "mentee"
+                      ? `Mentor: ${lesson.mentor_name}`
+                      : `Mentee: ${lesson.mentee_first_name} ${lesson.mentee_last_name}`}
+                  </Typography>
+
+                  <Box display="flex" alignItems="center" gap={1}>
+                    <EventIcon fontSize="small" />
+                    <Box>
+                      <Typography variant="body2" color="text.secondary">
+                        {new Date(lesson.meeting_date).toLocaleDateString()}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        Time:{" "}
+                        {lesson.meeting_time
+                          ? lesson.meeting_time.slice(0, 5)
+                          : "Not specified"}
+                      </Typography>
+                    </Box>
+                  </Box>
                 </Box>
+
+                {showApproveButton && (
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    size="small"
+                    onClick={() => {
+                      const dateOnly = lesson.meeting_date.slice(0, 10);
+                      console.log("Clicked Approve for", {
+                        ...lesson,
+                        meeting_date: dateOnly,
+                      });
+
+                      onApprove(
+                        lesson.mentee_id,
+                        lesson.meeting_date,
+                        lesson.meeting_time
+                      );
+                    }}
+                  >
+                    Approve
+                  </Button>
+                )}
               </Box>
             </CardContent>
           </Card>
