@@ -13,25 +13,29 @@ import MenteeProfilePage from "./pages/MenteeProfilePage";
 const theme = createTheme({
   palette: {
     primary: {
-      main: "#6366f1",
+      main: "#f472b6",
     },
     secondary: {
-      main: "#ec4899",
+      main: "#fb7185",
     },
     background: {
-      default: "#f8fafc",
+      default: "#fff0f5", 
     },
   },
   typography: {
-    fontFamily: "Roboto, Arial, sans-serif",
+    fontFamily: "'Roboto', sans-serif",
     h4: {
-      fontWeight: 600,
+      fontWeight: 700,
     },
     h6: {
       fontWeight: 500,
     },
+    body1: {
+      color: "#333",
+    },
   },
 });
+
 
 function App() {
   return (

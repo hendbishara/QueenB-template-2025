@@ -1,17 +1,24 @@
 import React from "react";
-import { Button } from "@mui/material";
+import { IconButton } from "@mui/material";
 import EmailIcon from "@mui/icons-material/Email";
 
 const EmailButton = ({ email }) => {
   return (
-    <Button
-      variant="outlined"
-      color="primary"
-      startIcon={<EmailIcon />}
+    <IconButton
       href={`mailto:${email}`}
+      sx={{
+        border: "2px solid #d63384",
+        borderRadius: "50%",
+        width: 50,
+        height: 50,
+        color: "#d63384",
+        "&:hover": {
+          backgroundColor: "#fce4ec"
+        }
+      }}
     >
-      Email
-    </Button>
+      <EmailIcon fontSize="medium" />
+    </IconButton>
   );
 };
 

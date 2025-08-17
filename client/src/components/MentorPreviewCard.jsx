@@ -22,15 +22,17 @@ const MentorPreviewCard = ({ mentor, onClickImage}) => {
 
         <Box
           display="flex"
-          flexDirection="column"
+          flexDirection="row"
+          justifyContent="center"
           alignItems="center"
           mt={2}
-          gap={1.2}
+          gap={2}   
         >
           <EmailButton email={mentor.email} />
           <PhoneButton phone={mentor.phone} />
           <LinkedInButton url={mentor.linkedin_url} />
         </Box>
+
   
       </CardContent>
     </Card>

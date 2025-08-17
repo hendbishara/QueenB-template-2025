@@ -84,33 +84,42 @@ const MenteeHomePage = () => {
       <>
       <Navbar/>
       <Box sx={{
-            maxWidth: "1000px",
-            mx: 8,  
-            px: 4,
-            py: 4
-         
+        maxWidth: "1000px",
+        mx: "auto",   
+        textAlign:"center", 
+        px: 4,
+        py: 4
       }} >
-        <Typography variant="h4" gutterBottom>
-          Find your Mentor
+        <Typography
+          variant="h3"
+          align="center"
+          sx={{ color: "#d63384", fontWeight: 900, mb: 3 }}
+        >
+          Search & Match
         </Typography>
-        <Box sx={{width: 650 }} >
-          <TextField
-            label="Search mentors by name"
-            variant="outlined"
-            fullWidth
-            margin="normal"
-            value={searchTerm}
-            size="small"
-
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
+        <Box
+          sx={{
+            width: "100%",
+            maxWidth: 800,
+            mx: "auto",         
+            textAlign: "center" 
+          }}
+        >       
+         <TextField
+          label="Search mentors by name"
+          variant="outlined"
+          fullWidth
+          margin="normal"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          sx={{ backgroundColor: "#fff", borderRadius: 1 }}
+        />
 
           <Autocomplete
             multiple
             options={allSkills}
             getOptionLabel={(option) => option}
             value={selectedSkills}
-            size="small"
             onChange={(event, newValue) => {
               setSelectedSkills(newValue);
               setSkills(newValue.join(",")); 
@@ -131,55 +140,62 @@ const MenteeHomePage = () => {
                 label="Skills"
                 placeholder="Choose skills"
                 margin="normal"
+                sx={{
+                  backgroundColor: "#ffffff",
+                  borderRadius: 1
+                }}
                 />
             )}
           />
         </Box>
 
-        <Box
-          sx={{
-            display: "flex",
-            gap: 10,
-            alignItems: "center",
-            flexWrap: "wrap",
-            mt: 2
-          }}
-        >
-          <Box sx={{ width: 300 }}>
-          <Autocomplete
-            options={["North", "Center", "South"]}
-            value={region}
-            onChange={(event, newValue) => {
-              setRegion(newValue || "");
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              gap: 18,
+              mt: 2
             }}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                label="Region"
-                margin="normal"
-                variant="outlined"
-                size="small"
+          >
+            <Box sx={{ width: 400 }}>
+              <Autocomplete
+                options={["North", "Center", "South"]}
+                value={region}
+                onChange={(event, newValue) => {
+                  setRegion(newValue || "");
+                }}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Region"
+                    margin="normal"
+                    variant="outlined"
+                    sx={{
+                      backgroundColor: "#ffffff",
+                      borderRadius: 1
+                    }}
+                  />
+                )}
               />
-            )}
-          />
-            <Typography gutterBottom >Years of Experience</Typography>
-            <Slider
-              value={Number(experience)}
-              onChange={(e, val) => setExperience(val)}
-              aria-labelledby="experience-slider"
-              valueLabelDisplay="auto"
-              step={1}
-              marks
-              min={0}
-              max={25}
-              margin="normal"
+            </Box>
 
-            />
+            <Box sx={{ width: 250 }}>
+              <Typography gutterBottom>Years of Experience</Typography>
+              <Slider
+                value={Number(experience)}
+                onChange={(e, val) => setExperience(val)}
+                aria-labelledby="experience-slider"
+                valueLabelDisplay="auto"
+                step={1}
+                marks
+                min={0}
+                max={25}
+              />
+            </Box>
           </Box>
-        </Box>
-        <ClearFiltersButton onClear={clearFilters}  />
         {loading ? (
-          <Box display="flex" justifyContent="center" mt={4}>
+          <Box display="flex" justifyContent="center" mt={4} >
             <CircularProgress />
           </Box>
         ) : (
