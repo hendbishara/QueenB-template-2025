@@ -2,25 +2,28 @@ import React, { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import Lessons from "../components/Lessons";
 import MenteeProfileEdit from "../components/MenteeProfileEdit";
+import ImageUploader from "../components/ImageUploader";
 import axios from "axios";
 import {
   Typography,
   Avatar,
   Box,
   CircularProgress,
-  Tabs, 
-  Tab, 
+  Tabs,
+  Tab,
   Divider,
-  Tooltip, 
-  IconButton
+  Tooltip,
+  IconButton,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
+import CameraAltIcon from "@mui/icons-material/CameraAlt";
 
 const MenteeProfilePage = () => {
   const [mentee, setMentee] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState(0);
   const [isEditing, setIsEditing] = useState(false);
+  const [showImageUploader, setShowImageUploader] = useState(false);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -81,7 +84,7 @@ const MenteeProfilePage = () => {
         ) : (
           <Box
             sx={{
-              position: "relative", 
+              position: "relative",
               display: "flex",
               gap: 4,
               alignItems: "flex-start",
@@ -99,7 +102,7 @@ const MenteeProfilePage = () => {
                   position: "absolute",
                   top: 16,
                   right: 16,
-                  color: "#6366f1"
+                  color: "#6366f1",
                 }}
                 onClick={() => setIsEditing(true)}
               >
@@ -107,11 +110,18 @@ const MenteeProfilePage = () => {
               </IconButton>
             </Tooltip>
 
-            {/* Profile picture and name on the left */}
             <Box sx={{ textAlign: "center", minWidth: 250 }}>
-              <Avatar
-                sx={{ width: 120, height: 120, mx: "auto", mb: 2 }}
-                src={mentee.image_url || ""}
+       
+
+      
+              <ImageUploader
+                open={showImageUploader}
+                imageUrl={mentee.image_url}
+                onImageChange={(newUrl) => {
+                  setMentee((prev) => ({ ...prev, image_url: newUrl }));
+                  setShowImageUploader(false);
+                }}
+                onClose={() => setShowImageUploader(false)}
               />
               <Typography variant="h5" gutterBottom>
                 {mentee.first_name} {mentee.last_name}
@@ -121,7 +131,6 @@ const MenteeProfilePage = () => {
               </Typography>
             </Box>
 
-            {/* Personal details on the right */}
             <Box sx={{ flex: 1 }}>
               <Typography variant="subtitle1" gutterBottom>
                 <strong>Email:</strong> {mentee.email}

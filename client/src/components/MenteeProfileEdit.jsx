@@ -1,10 +1,11 @@
 import React, { useState } from "react";
+import ImageUploader from "../components/ImageUploader";
 import {
   Box,
   TextField,
   Button,
   Typography,
-  Stack
+  Stack,MenuItem, Select, InputLabel, FormControl
 } from "@mui/material";
 import axios from "axios";
 
@@ -42,6 +43,10 @@ const MenteeProfileEdit = ({ profile, onClose, onSave }) => {
       </Typography>
 
       <Stack spacing={2}>
+      <ImageUploader
+          imageUrl={formData.image_url}
+          onImageChange={(newImage) => setFormData({ ...formData, image_url: newImage })}
+        />
         <TextField
           label="First Name"
           value={formData.first_name}
@@ -72,12 +77,19 @@ const MenteeProfileEdit = ({ profile, onClose, onSave }) => {
           onChange={handleChange("linkedin_url")}
           fullWidth
         />
-        <TextField
-          label="Region"
-          value={formData.region}
-          onChange={handleChange("region")}
-          fullWidth
-        />
+        <FormControl fullWidth>
+        <InputLabel id="region-label">Region</InputLabel>
+        <Select
+            labelId="region-label"
+            value={formData.region || ""}
+            label="Region"
+            onChange={handleChange("region")}
+        >
+            <MenuItem value="North">North</MenuItem>
+            <MenuItem value="Center">Center</MenuItem>
+            <MenuItem value="South">South</MenuItem>
+        </Select>
+        </FormControl>
         <TextField
           label="Short Description"
           value={formData.short_description}
@@ -86,12 +98,7 @@ const MenteeProfileEdit = ({ profile, onClose, onSave }) => {
           rows={3}
           fullWidth
         />
-        <TextField
-          label="Image URL"
-          value={formData.image_url}
-          onChange={handleChange("image_url")}
-          fullWidth
-        />
+
 
         {error && (
           <Typography color="error" variant="body2">
