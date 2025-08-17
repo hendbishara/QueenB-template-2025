@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import EventIcon from "@mui/icons-material/Event";
 
-  const Lessons = ({ userId, role = "mentee", apiPath, emptyMessage, showApproveButton = false, onApprove }) => {
+  const Lessons = ({ userId, role = "mentee", apiPath, emptyMessage, showApproveButton = false, onApprove ,  refresh = 0}) => {
   const [lessons, setLessons] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -32,7 +32,7 @@ import EventIcon from "@mui/icons-material/Event";
     };
 
     fetchLessons();
-  }, [userId, role, apiPath]);
+  }, [userId, role, apiPath, refresh]);
 
   if (loading) return <CircularProgress />;
   if (lessons.length === 0)
@@ -72,9 +72,12 @@ import EventIcon from "@mui/icons-material/Event";
         variant="contained"
         color="primary"
         size="small"
-        onClick={() =>
-          onApprove(lesson.mentee_id, lesson.meeting_date)
-        }
+        onClick={() => {
+          const dateOnly = lesson.meeting_date.slice(0, 10);
+          console.log("Clicked Approve for", { ...lesson, meeting_date: dateOnly });
+
+          onApprove(lesson.mentee_id, lesson.meeting_date, lesson.meeting_time);
+        }}        
       >
         Approve
       </Button>

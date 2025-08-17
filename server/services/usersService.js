@@ -293,7 +293,8 @@ async function getPendingMeetingsForMentor(mentorId) {
       u.last_name AS mentee_last_name,
       u.email AS mentee_email,
       u.phone AS mentee_phone,
-      mm.meeting_date
+      DATE_FORMAT(mm.meeting_date, '%Y-%m-%d') AS meeting_date,
+      mm.meeting_time
     FROM mentorship_meetings mm
     JOIN users u ON mm.mentee_id = u.id
     WHERE mm.mentor_id = ? AND mm.approved = 0
@@ -304,12 +305,13 @@ async function getPendingMeetingsForMentor(mentorId) {
   return rows;
 }
 
-async function approveMeeting(menteeId, meetingDate) {
+
+async function approveMeeting(menteeId, meetingDate, meetingTime) {
   const [result] = await pool.query(
     `UPDATE mentorship_meetings
      SET approved = 1
-     WHERE mentee_id = ? AND meeting_date = ?`,
-    [menteeId, meetingDate]
+     WHERE mentee_id = ? AND meeting_date = ? AND meeting_time = ?`,
+    [menteeId, meetingDate, meetingTime]
   );
   return result;
 }
@@ -337,7 +339,7 @@ async function getUpcomingMeetingsForMentor(mentorId) {
     SELECT 
       u.first_name AS mentee_first_name,
       u.last_name AS mentee_last_name,
-      mm.meeting_date
+      DATE_FORMAT(mm.meeting_date, '%Y-%m-%d') AS meeting_date
     FROM mentorship_meetings mm
     JOIN users u ON mm.mentee_id = u.id
     WHERE mm.mentor_id = ? AND mm.meeting_date >= CURDATE() AND mm.approved = 1
@@ -347,5 +349,6 @@ async function getUpcomingMeetingsForMentor(mentorId) {
   );
   return rows;
 }
+
 
 module.exports = {getMentorProfile, getPastMeetingsForMentor, getUpcomingMeetingsForMentor,approveMeeting, getPendingMeetingsForMentor, listAllMentors, getMentorById, getProfile, createMentorshipMeeting,getLessonsByMenteeId, getUpcomingLessons, getPendingLessons, getUnavailableSlotsForMentor, updateMenteeProfile };

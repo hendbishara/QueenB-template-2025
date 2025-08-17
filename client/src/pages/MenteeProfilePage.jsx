@@ -170,14 +170,14 @@ const MenteeProfilePage = () => {
         {activeTab === 1 && (
           <Lessons
           userId={mentee.id}
-          apiPath="lessons"
+          apiPath="upcoming-lessons"
           emptyMessage="No past lessons found."
         />
         )}
         {activeTab === 2 && (
           <Lessons
             userId={mentee.id}
-            apiPath="lessons"
+            apiPath="pending-lessons"
             emptyMessage="No past lessons found."
           />
         )}

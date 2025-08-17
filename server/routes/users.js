@@ -153,8 +153,8 @@ router.get("/mentor/pending-meetings", async (req, res, next) => {
 
 router.put("/mentor/approve-meeting", async (req, res, next) => {
   try {
-    const { menteeId, meetingDate } = req.body;
-    await approveMeeting(menteeId, meetingDate);
+    const { menteeId, meetingDate, meetingTime } = req.body;
+    await approveMeeting(menteeId, meetingDate, meetingTime);
     res.json({ success: true });
   } catch (err) {
     next(err); 

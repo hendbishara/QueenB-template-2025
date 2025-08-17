@@ -31,17 +31,35 @@ const MentorProfilePage = () => {
     fetchMentorProfile();
   }, []);
 
-  const handleApprove = async (menteeId, meeting_date) => {
+  // const handleApprove = async (menteeId, meeting_date) => {
+  //   try {
+  //     await axios.put("/api/users/mentor/approve-meeting", {
+  //       menteeId,
+  //       meetingDate: meeting_date,
+  //     });
+  //   } catch (err) {
+  //     console.error("Approval failed", err);
+  //   }
+  // };
+  const handleApprove = async (menteeId, meeting_date, meeting_time) => {
     try {
       await axios.put("/api/users/mentor/approve-meeting", {
         menteeId,
         meetingDate: meeting_date,
+        meetingTime: meeting_time
       });
+  
+      if (activeTab === 2) {
+        setMentor((prev) => ({
+          ...prev,
+          refresh: Math.random(),
+        }));
+      }
     } catch (err) {
       console.error("Approval failed", err);
     }
   };
-
+  
   if (loading) {
     return (
       <>
@@ -124,18 +142,22 @@ const MentorProfilePage = () => {
               userId={mentor.id}
               apiPath="upcoming-meetings"
               emptyMessage="No upcoming meetings."
+              refresh={mentor.refresh}
+
             />
           )}
 
         {activeTab === 2 && (
-          <Lessons
+            <Lessons
             role="mentor"
             userId={mentor.id}
             apiPath="pending-meetings"
             emptyMessage="No pending meetings."
             showApproveButton
             onApprove={handleApprove}
+            refresh={mentor.refresh}
           />
+
         )}
         </Box>
       </Box>

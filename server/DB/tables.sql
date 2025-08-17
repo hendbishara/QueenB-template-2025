@@ -38,3 +38,5 @@ ADD meeting_time TIME AFTER meeting_date;
 
 Drop Table mentor_skills;
 DROP TABLE users;
+ALTER TABLE mentorship_meetings
+MODIFY COLUMN meeting_date DATE NOT NULL;
