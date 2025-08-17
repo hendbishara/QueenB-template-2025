@@ -385,7 +385,7 @@ function MentorForm({ onSubmit, busy }) {
         label="Programming Languages / Tech"
         id="mentor-skills"
         required
-        hint="Comma-separated: React, Node.js, Sql"
+        hint="Comma-separated: e.g., React, Node.js, Sql"
         error={errors.skills}
       >
         <Input
@@ -393,7 +393,7 @@ function MentorForm({ onSubmit, busy }) {
           value={form.skills}
           onChange={(e) => handleSkillsChange(e.target.value)}
           onBlur={(e) => set("skills", toTitleCasePerWordCSV(e.target.value))}
-          placeholder="Sql, Java, React, C++"
+          placeholder="e.g., Sql, Java, React, C++"
           aria-invalid={!!errors.skills}
         />
       </Field>
