@@ -2,7 +2,8 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom"; // Import Router components
 import { ThemeProvider, createTheme, CssBaseline } from "@mui/material";
 import Dashboard from "./components/Dashboard"; // Import Dashboard component
-import RegistrationPage from "./pages/RegistrationPage"; // Import RegistrationPage component
+//import RegistrationPage from "./pages/RegistrationPage"; // Import RegistrationPage component
+import RegistrationPage from "./features/auth/RegistrationPage";
 
 const theme = createTheme({
   palette: {
