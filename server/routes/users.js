@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { listAllMentors, createMentorshipMeeting, getProfile, getMentorById, getLessonsByMenteeId , getUpcomingLessons, getPendingLessons, getUnavailableSlotsForMentor} = require("../services/usersService");
+const { listAllMentors, createMentorshipMeeting, getProfile, getMentorById, getLessonsByMenteeId , getUpcomingLessons, getPendingLessons, getUnavailableSlotsForMentor, updateMenteeProfile} = require("../services/usersService");
 const pool = require("../pool_db/pool");
 
 // GET /api/users - Get all users
@@ -114,6 +114,24 @@ router.get("/mentors/:id/unavailable-slots", async (req, res, next) => {
     const { id } = req.params;
     const slots = await getUnavailableSlotsForMentor(id);
     res.json(slots);
+  } catch (err) {
+    next(err);
+  }
+});
+
+// PUT /api/users/mentee/profile
+router.put("/mentee/profile", async (req, res, next) => {
+  try {
+    const menteeId = 2;//hard coded
+    const updatedFields = req.body;
+
+    const updatedProfile = await updateMenteeProfile(menteeId, updatedFields);
+
+    if (!updatedProfile) {
+      return res.status(404).json({ error: "Mentee not found or not updated" });
+    }
+
+    res.json(updatedProfile);
   } catch (err) {
     next(err);
   }

@@ -206,5 +206,47 @@ async function getUnavailableSlotsForMentor(mentorId) {
   );
   return rows;
 }
-module.exports = {listAllMentors, getMentorById, getProfile, createMentorshipMeeting,getLessonsByMenteeId, getUpcomingLessons, getPendingLessons, getUnavailableSlotsForMentor };
+
+async function updateMenteeProfile(menteeId, updatedFields) {
+  const {
+    first_name,
+    last_name,
+    email,
+    phone,
+    image_url,
+    linkedin_url,
+    short_description,
+    region
+  } = updatedFields;
+
+  const query = `
+    UPDATE users
+    SET 
+      first_name = ?, 
+      last_name = ?, 
+      email = ?, 
+      phone = ?, 
+      image_url = ?, 
+      linkedin_url = ?, 
+      short_description = ?, 
+      region = ?
+    WHERE id = ? AND mentor = 0
+  `;
+
+  await pool.query(query, [
+    first_name,
+    last_name,
+    email,
+    phone,
+    image_url,
+    linkedin_url,
+    short_description,
+    region,
+    menteeId
+  ]);
+
+  return { success: true, message: "Profile updated successfully." };
+}
+
+module.exports = {listAllMentors, getMentorById, getProfile, createMentorshipMeeting,getLessonsByMenteeId, getUpcomingLessons, getPendingLessons, getUnavailableSlotsForMentor, updateMenteeProfile };
 
