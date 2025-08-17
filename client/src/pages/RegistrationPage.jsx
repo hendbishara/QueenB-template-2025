@@ -47,6 +47,15 @@ const ENDPOINTS = {
 // ===================== Utilities ===================== //
 const cls = (...xs) => xs.filter(Boolean).join(" ");
 
+function roleBtnClasses(active) {
+  return cls(
+    "w-full rounded-2xl px-6 py-4 text-base font-semibold transition shadow-md border-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-pink-400",
+    active
+      ? "bg-pink-600 text-white border-pink-700 shadow-lg"
+      : "bg-white text-pink-700 border-pink-300 hover:border-pink-400 hover:bg-rose-50"
+  );
+}
+
 function formatIsraeliPhone(input) {
   const digits = (input || "").replace(/\D+/g, "");
   if (!digits) return "";
@@ -222,6 +231,8 @@ function useFirstErrorScroll() {
 
 // ===================== Forms ===================== //
 function MentorForm({ onSubmit, busy }) {
+  const MIN_ABOUT = 30;
+  const MAX_ABOUT = 500;
   const [form, setForm] = useState({
     first_name: "",
     last_name: "",
@@ -256,7 +267,7 @@ function MentorForm({ onSubmit, busy }) {
     if (!form.first_name) e.first_name = "Required";
     if (!form.last_name) e.last_name = "Required";
     if (!/^0\d{2}-\d{7}$/.test(form.phone))
-      e.phone = "Invalid format. Use 055-1234567";
+      e.phone = "Invalid format. Use 05X-XXXXXXX";
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(form.email))
       e.email = "Invalid email";
     if (!PASSWORD_RULES.every((r) => r.test(form.password)))
@@ -266,6 +277,9 @@ function MentorForm({ onSubmit, busy }) {
     // Mentor-only required fields
     if (!form.skills) e.skills = "Required (comma-separated)";
     if (!form.years_experience) e.years_experience = "Required";
+    if ((form.short_description || "").length < MIN_ABOUT) {
+      e.short_description = `Please write at least ${MIN_ABOUT} characters`;
+    }
     setErrors(e);
     return e;
   }
@@ -323,7 +337,7 @@ function MentorForm({ onSubmit, busy }) {
         required
         hint={
           <span>
-            Format: <b>055-1234567</b>
+            Format: <b>05X-XXXXXXX</b>
           </span>
         }
         error={errors.phone}
@@ -333,7 +347,7 @@ function MentorForm({ onSubmit, busy }) {
           inputMode="tel"
           value={form.phone}
           onChange={(e) => handlePhone(e.target.value)}
-          placeholder="055-1234567"
+          placeholder="05X-XXXXXXX"
           aria-invalid={!!errors.phone}
         />
       </Field>
@@ -371,7 +385,7 @@ function MentorForm({ onSubmit, busy }) {
         label="Programming Languages / Tech"
         id="mentor-skills"
         required
-        hint="Comma-separated: React, Node.js, SQL"
+        hint="Comma-separated: React, Node.js, Sql"
         error={errors.skills}
       >
         <Input
@@ -379,7 +393,7 @@ function MentorForm({ onSubmit, busy }) {
           value={form.skills}
           onChange={(e) => handleSkillsChange(e.target.value)}
           onBlur={(e) => set("skills", toTitleCasePerWordCSV(e.target.value))}
-          placeholder="SQL, Front End, React"
+          placeholder="Sql, Java, React, C++"
           aria-invalid={!!errors.skills}
         />
       </Field>
@@ -394,7 +408,7 @@ function MentorForm({ onSubmit, busy }) {
           id="mentor-years_experience"
           value={form.years_experience}
           onChange={(e) => set("years_experience", e.target.value)}
-          placeholder="5"
+          placeholder="e.g., 5"
           aria-invalid={!!errors.years_experience}
         />
       </Field>
@@ -423,7 +437,7 @@ function MentorForm({ onSubmit, busy }) {
           id="mentor-region"
           value={form.region}
           onChange={(e) => set("region", e.target.value)}
-          placeholder="Center"
+          placeholder="e.g., Center"
         />
       </Field>
 
@@ -431,9 +445,19 @@ function MentorForm({ onSubmit, busy }) {
         <Textarea
           id="mentor-short_description"
           value={form.short_description}
-          onChange={(e) => set("short_description", e.target.value)}
+          onChange={(e) =>
+            set("short_description", e.target.value.slice(0, MAX_ABOUT))
+          }
           placeholder="Tell us about yourself, interests, availability, etc."
         />
+        <div className="mt-1 text-xs text-slate-500">
+          {form.short_description.length}/{MAX_ABOUT} characters
+        </div>
+        {errors.short_description && (
+          <div className="text-sm text-rose-600">
+            {errors.short_description}
+          </div>
+        )}
       </Field>
 
       <Field
@@ -458,7 +482,7 @@ function MentorForm({ onSubmit, busy }) {
               <img
                 src={src}
                 alt="avatar option"
-                className="h-10 w-10 rounded-lg object-cover"
+                className="h-18 w-18 rounded-lg object-cover"
               />
             </button>
           ))}
@@ -510,7 +534,7 @@ function MenteeForm({ onSubmit, busy }) {
     if (!form.first_name) e.first_name = "Required";
     if (!form.last_name) e.last_name = "Required";
     if (!/^0\d{2}-\d{7}$/.test(form.phone))
-      e.phone = "Invalid format. Use 055-1234567";
+      e.phone = "Invalid format. Use 05X-XXXXXXX";
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(form.email))
       e.email = "Invalid email";
     if (!PASSWORD_RULES.every((r) => r.test(form.password)))
@@ -573,7 +597,7 @@ function MenteeForm({ onSubmit, busy }) {
         required
         hint={
           <span>
-            Format: <b>055-1234567</b>
+            Format: <b>05X-XXXXXXX</b>
           </span>
         }
         error={errors.phone}
@@ -582,7 +606,7 @@ function MenteeForm({ onSubmit, busy }) {
           id="mentee-phone"
           value={form.phone}
           onChange={(e) => handlePhone(e.target.value)}
-          placeholder="055-1234567"
+          placeholder="05X-XXXXXXX"
           aria-invalid={!!errors.phone}
         />
       </Field>
@@ -640,7 +664,7 @@ function MenteeForm({ onSubmit, busy }) {
           id="mentee-region"
           value={form.region}
           onChange={(e) => set("region", e.target.value)}
-          placeholder="Center"
+          placeholder="e.g., Center"
         />
       </Field>
 
@@ -675,7 +699,7 @@ function MenteeForm({ onSubmit, busy }) {
               <img
                 src={src}
                 alt="avatar option"
-                className="h-10 w-10 rounded-lg object-cover"
+                className="h-18 w-18 rounded-lg object-cover"
               />
             </button>
           ))}
@@ -752,62 +776,62 @@ function RegistrationPage() {
           <button
             type="button"
             onClick={() => setRole("mentor")}
-            className={cls(
-              "w-full rounded-2xl px-5 py-4 text-center text-base font-semibold shadow-sm",
-              role === "mentor" ? THEME.buttonPrimary : THEME.buttonSecondary
-            )}
+            className={roleBtnClasses(role === "mentor")}
+            aria-pressed={role === "mentor"}
           >
-            I am a Mentor
+            I am a Mentor 👩‍🏫
           </button>
           <button
             type="button"
             onClick={() => setRole("mentee")}
-            className={cls(
-              "w-full rounded-2xl px-5 py-4 text-center text-base font-semibold shadow-sm",
-              role === "mentee" ? THEME.buttonPrimary : THEME.buttonSecondary
-            )}
+            className={roleBtnClasses(role === "mentee")}
+            aria-pressed={role === "mentee"}
           >
-            I am a Mentee
+            I am a Mentee 🎓
           </button>
         </div>
 
         {/* Card */}
-        <div
-          className={cls(
-            "rounded-3xl border p-6 shadow-sm",
-            THEME.cardBg,
-            THEME.border
-          )}
-        >
-          {!role ? (
-            <div className={cls("text-center", THEME.subtext)}>
-              Click one of the buttons above to start the registration.
-            </div>
-          ) : role === "mentor" ? (
-            <MentorForm
-              busy={loading}
-              onSubmit={(payload) => postToBackend("mentor", payload)}
-            />
-          ) : (
-            <MenteeForm
-              busy={loading}
-              onSubmit={(payload) => postToBackend("mentee", payload)}
-            />
-          )}
+        {!role && (
+          <p className="text-center text-sm text-slate-500">
+            Click one of the buttons above to start the registration.
+          </p>
+        )}
 
-          {message && (
-            <div
-              className={cls(
-                "mt-6 rounded-2xl px-4 py-3 text-sm",
-                message.type === "success"
-                  ? "bg-emerald-50 text-emerald-700"
-                  : "bg-rose-50 text-rose-700"
-              )}
-            >
-              {message.text}
-            </div>
-          )}
-        </div>
+        {role && (
+          <div
+            className={cls(
+              "mt-4 rounded-3xl border p-6 shadow-sm",
+              THEME.cardBg,
+              THEME.border
+            )}
+          >
+            {role === "mentor" ? (
+              <MentorForm
+                busy={loading}
+                onSubmit={(payload) => postToBackend("mentor", payload)}
+              />
+            ) : (
+              <MenteeForm
+                busy={loading}
+                onSubmit={(payload) => postToBackend("mentee", payload)}
+              />
+            )}
+
+            {message && (
+              <div
+                className={cls(
+                  "mt-6 rounded-2xl px-4 py-3 text-sm",
+                  message.type === "success"
+                    ? "bg-emerald-50 text-emerald-700"
+                    : "bg-rose-50 text-rose-700"
+                )}
+              >
+                {message.text}
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
