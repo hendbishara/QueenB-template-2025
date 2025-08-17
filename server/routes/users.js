@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { listAllMentors, createMentorshipMeeting, getProfile, getMentorById, getLessonsByMenteeId , getUpcomingLessons, getPendingLessons, getUnavailableSlotsForMentor, updateMenteeProfile} = require("../services/usersService");
+const {getMentorProfile, getPastMeetingsForMentor, getUpcomingMeetingsForMentor, approveMeeting, getPendingMeetingsForMentor, listAllMentors, createMentorshipMeeting, getProfile, getMentorById, getLessonsByMenteeId , getUpcomingLessons, getPendingLessons, getUnavailableSlotsForMentor, updateMenteeProfile} = require("../services/usersService");
 const pool = require("../pool_db/pool");
 
 // GET /api/users - Get all users
@@ -132,6 +132,69 @@ router.put("/mentee/profile", async (req, res, next) => {
     }
 
     res.json(updatedProfile);
+  } catch (err) {
+    next(err);
+  }
+});
+
+
+
+// GET /api/users/mentor/pending-meetings
+router.get("/mentor/pending-meetings", async (req, res, next) => {
+  try {
+    const mentorId = 1; // 
+    const meetings = await getPendingMeetingsForMentor(mentorId);
+    res.json(meetings);
+  } catch (err) {
+    next(err);
+  }
+});
+
+
+router.put("/mentor/approve-meeting", async (req, res, next) => {
+  try {
+    const { menteeId, meetingDate } = req.body;
+    await approveMeeting(menteeId, meetingDate);
+    res.json({ success: true });
+  } catch (err) {
+    next(err); 
+  }
+});
+
+
+// GET /api/users/mentor/past-meetings
+router.get("/mentor/past-meetings", async (req, res, next) => {
+  try {
+    const mentorId = 1; // או 1
+    const meetings = await getPastMeetingsForMentor(mentorId);
+    res.json(meetings);
+  } catch (err) {
+    next(err);
+  }
+});
+
+// GET /api/users/mentor/upcoming-meetings
+router.get("/mentor/upcoming-meetings", async (req, res, next) => {
+  try {
+    const mentorId = 1;
+    const meetings = await getUpcomingMeetingsForMentor(mentorId);
+    res.json(meetings);
+  } catch (err) {
+    next(err);
+  }
+});
+
+// GET /api/users/mentor/profile
+router.get("/mentor/profile", async (req, res, next) => {
+  try {
+    const mentorId = 1; 
+    const profile = await getMentorProfile(mentorId);
+
+    if (!profile) {
+      return res.status(404).json({ error: "Mentor not found" });
+    }
+
+    res.json(profile);
   } catch (err) {
     next(err);
   }

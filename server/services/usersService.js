@@ -250,4 +250,102 @@ async function updateMenteeProfile(menteeId, updatedFields) {
 }
 
 
-module.exports = {listAllMentors, getMentorById, getProfile, createMentorshipMeeting,getLessonsByMenteeId, getUpcomingLessons, getPendingLessons, getUnavailableSlotsForMentor, updateMenteeProfile };
+//mentor:
+
+async function getMentorProfile(id) {
+  const [rows] = await pool.query(
+    `SELECT 
+        u.id,
+        u.first_name,
+        u.last_name,
+        u.image_url,
+        u.linkedin_url,
+        u.phone,
+        u.email,
+        u.short_description,
+        u.mentor,
+        u.region
+     FROM users u
+     WHERE u.mentor = 1 AND u.id = ?`,
+    [id]
+  );
+  if (rows.length === 0) return null;
+  return {
+    id: rows[0].id,
+    first_name: rows[0].first_name,
+    last_name: rows[0].last_name,
+    image_url: rows[0].image_url,
+    linkedin_url: rows[0].linkedin_url,
+    phone: rows[0].phone,
+    email: rows[0].email,
+    short_description: rows[0].short_description,
+    region: rows[0].region,
+    role: "mentor"
+  };
+}
+
+async function getPendingMeetingsForMentor(mentorId) {
+  const [rows] = await pool.query(
+    `
+    SELECT 
+      mm.mentee_id,
+      u.first_name AS mentee_first_name,
+      u.last_name AS mentee_last_name,
+      u.email AS mentee_email,
+      u.phone AS mentee_phone,
+      mm.meeting_date
+    FROM mentorship_meetings mm
+    JOIN users u ON mm.mentee_id = u.id
+    WHERE mm.mentor_id = ? AND mm.approved = 0
+    ORDER BY mm.meeting_date ASC
+    `,
+    [mentorId]
+  );
+  return rows;
+}
+
+async function approveMeeting(menteeId, meetingDate) {
+  const [result] = await pool.query(
+    `UPDATE mentorship_meetings
+     SET approved = 1
+     WHERE mentee_id = ? AND meeting_date = ?`,
+    [menteeId, meetingDate]
+  );
+  return result;
+}
+
+async function getPastMeetingsForMentor(mentorId) {
+  const [rows] = await pool.query(
+    `
+    SELECT 
+      u.first_name AS mentee_first_name,
+      u.last_name AS mentee_last_name,
+      mm.meeting_date
+    FROM mentorship_meetings mm
+    JOIN users u ON mm.mentee_id = u.id
+    WHERE mm.mentor_id = ? AND mm.meeting_date < CURDATE() AND mm.approved = 1
+    ORDER BY mm.meeting_date DESC
+    `,
+    [mentorId]
+  );
+  return rows;
+}
+
+async function getUpcomingMeetingsForMentor(mentorId) {
+  const [rows] = await pool.query(
+    `
+    SELECT 
+      u.first_name AS mentee_first_name,
+      u.last_name AS mentee_last_name,
+      mm.meeting_date
+    FROM mentorship_meetings mm
+    JOIN users u ON mm.mentee_id = u.id
+    WHERE mm.mentor_id = ? AND mm.meeting_date >= CURDATE() AND mm.approved = 1
+    ORDER BY mm.meeting_date ASC
+    `,
+    [mentorId]
+  );
+  return rows;
+}
+
+module.exports = {getMentorProfile, getPastMeetingsForMentor, getUpcomingMeetingsForMentor,approveMeeting, getPendingMeetingsForMentor, listAllMentors, getMentorById, getProfile, createMentorshipMeeting,getLessonsByMenteeId, getUpcomingLessons, getPendingLessons, getUnavailableSlotsForMentor, updateMenteeProfile };

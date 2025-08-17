@@ -111,9 +111,7 @@ const MenteeProfilePage = () => {
             </Tooltip>
 
             <Box sx={{ textAlign: "center", minWidth: 250 }}>
-       
-
-      
+              
               <ImageUploader
                 open={showImageUploader}
                 imageUrl={mentee.image_url}
@@ -164,23 +162,23 @@ const MenteeProfilePage = () => {
 
         {activeTab === 0 && (
           <Lessons
-            menteeId={mentee.id}
+            userId={mentee.id}
             apiPath="lessons"
             emptyMessage="No past lessons found."
           />
         )}
         {activeTab === 1 && (
           <Lessons
-            menteeId={mentee.id}
-            apiPath="upcoming-lessons"
-            emptyMessage="No upcoming lessons found."
-          />
+          userId={mentee.id}
+          apiPath="lessons"
+          emptyMessage="No past lessons found."
+        />
         )}
         {activeTab === 2 && (
           <Lessons
-            menteeId={mentee.id}
-            apiPath="pending-lessons"
-            emptyMessage="No pending lessons found."
+            userId={mentee.id}
+            apiPath="lessons"
+            emptyMessage="No past lessons found."
           />
         )}
       </Box>
