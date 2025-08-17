@@ -16,7 +16,6 @@ app.use(express.urlencoded({ extended: true }));
 //RONTEST
 // Routes
 app.use("/api/users", require("./routes/users"));
-
 // Health check endpoint
 app.get("/api/health", (req, res) => {
   res.json({
@@ -47,6 +46,6 @@ app.use("*", (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`🚀 Server is running on port ${PORT}`);
-  console.log(`📱 Health check: http://localhost:${PORT}/api/health`);
+  console.log(`Server is running on port ${PORT}`);
+  console.log(`Health check: http://localhost:${PORT}/api/health`);
 });

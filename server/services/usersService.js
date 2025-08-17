@@ -102,6 +102,7 @@ async function getMentorById(id) {
           u.phone,
           u.email,
           u.short_description,
+          u.region,
           u.years_experience,
           GROUP_CONCAT(ms.skill_name ORDER BY ms.skill_name SEPARATOR ',') AS skills
        FROM users u
@@ -248,5 +249,5 @@ async function updateMenteeProfile(menteeId, updatedFields) {
   return { success: true, message: "Profile updated successfully." };
 }
 
-module.exports = {listAllMentors, getMentorById, getProfile, createMentorshipMeeting,getLessonsByMenteeId, getUpcomingLessons, getPendingLessons, getUnavailableSlotsForMentor, updateMenteeProfile };
 
+module.exports = {listAllMentors, getMentorById, getProfile, createMentorshipMeeting,getLessonsByMenteeId, getUpcomingLessons, getPendingLessons, getUnavailableSlotsForMentor, updateMenteeProfile };

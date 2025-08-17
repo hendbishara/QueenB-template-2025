@@ -9,7 +9,6 @@ import {
 import Dashboard from "./components/Dashboard"; 
 import MenteeHomePage from "./pages/MenteeHomePage";
 import MenteeProfilePage from "./pages/MenteeProfilePage";
-import MentorProfilePage from "./pages/MentorProfilePage";
 
 const theme = createTheme({
   palette: {
@@ -42,7 +41,6 @@ function App() {
           <Route path="/" element={<Dashboard />} />
           <Route path="/mentee/home" element={<MenteeHomePage />} />
           <Route path="/mentee/profile" element={<MenteeProfilePage />} />
-          <Route path="/mentor/profile" element={<MentorProfilePage />} />
         </Routes>
     </ThemeProvider>
   );
