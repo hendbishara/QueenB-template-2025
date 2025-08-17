@@ -2,7 +2,7 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom"; // Import Router components
 import { ThemeProvider, createTheme, CssBaseline } from "@mui/material";
 import Dashboard from "./components/Dashboard"; // Import Dashboard component
-import RegistrationPage from "./components/RegistrationPage"; // Import RegistrationPage component
+import RegistrationPage from "./pages/RegistrationPage"; // Import RegistrationPage component
 
 const theme = createTheme({
   palette: {
@@ -23,8 +23,8 @@ function App() {
       <CssBaseline />
       <Router>
         <Routes>
-          <Route path="/" element={<Dashboard />} />
           <Route path="/register" element={<RegistrationPage />} />
+          <Route path="/" element={<Dashboard />} />
         </Routes>
       </Router>
     </ThemeProvider>

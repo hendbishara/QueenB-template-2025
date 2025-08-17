@@ -20,8 +20,6 @@ app.use(express.urlencoded({ extended: true }));
 // Routes
 app.use("/api/users", require("./routes/users"));
 app.use("/api/auth", require("./routes/auth")); //************* */
-// app.use("/api/mentor", require("./routes/mentor")); //*********** */
-// app.use("/api/mentee", require("./routes/mentee")); //************* */
 
 // Test route to verify database connectivity
 // somewhere after the middlewares and before the 404 handler
