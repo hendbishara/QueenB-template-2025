@@ -1,40 +1,44 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useRef, useEffect } from "react";
+// If you plan to redirect after successful registration, uncomment the next line
+// and make sure react-router-dom is installed + Router is set up in your app.
+// import { useNavigate } from "react-router-dom";
 
 /**
- * QueenB – Registration Page
+ * QueenB – Registration Page (EN, LTR)
  * -------------------------------------------------------
- * - RTL layout with Hebrew labels
- * - Two role buttons: Mentor / Mentee
- * - Each role opens its own form
- * - Password strength helper with live checks
- * - Phone formatter enforcing 055-1234567 pattern (or similar 0XX-XXXXXXX)
- * - Clear field labels + helper notes above selected inputs
- * - Accessible markup, minimal client-side validation
- * - Ready to POST to your backend (customize ENDPOINTS below)
- *
- * 🔧 THEME — tweak colors & spacing here (Tailwind classes)
+ * ✔ All labels/placeholders in English
+ * ✔ LTR layout
+ * ✔ Helper text example appears under the label
+ * ✔ Input sits directly under the label (with helper under label)
+ * ✔ Smaller avatar options
+ * ✔ Big prominent submit button for each role
+ * ✔ Centered card and controls
+ * ✔ Stronger validation UX (inline errors + auto-scroll to first error)
+ * ✔ Mentor-only required: "Programming Languages / Tech" and "Years of Experience"
+ * ✔ Skills normalization to Title Case per word (frontend) + note to also enforce on backend
+ * ✔ Post-success: place for redirect to /login (commented TODO)
  */
+
+// ===================== THEME ===================== //
 const THEME = {
-  pageBg: "min-h-screen bg-gradient-to-br from-rose-50 via-white to-indigo-50", // רקע הדף
-  cardBg: "bg-white", // רקע כרטיס/טופס
-  text: "text-slate-800", // צבע טקסט כללי
-  subtext: "text-slate-500", // טקסט משני / הערות
-  border: "border-slate-200", // צבע מסגרות
-  inputBg: "bg-white", // רקע שדות קלט
-  inputText: "text-slate-800", // טקסט בשדות קלט
-  inputPlaceholder: "placeholder-slate-400", // צבע placeholder
-  inputFocus: "focus:ring-2 focus:ring-fuchsia-400 focus:border-fuchsia-400", // פוקוס על שדות
-  buttonPrimary:
-    "bg-fuchsia-600 hover:bg-fuchsia-700 active:bg-fuchsia-800 text-white",
+  pageBg:
+    "min-h-screen bg-gradient-to-b from-pink-50 via-rose-50 to-pink-100 flex items-center justify-center p-6",
+  cardBg: "bg-white",
+  text: "text-slate-800",
+  subtext: "text-slate-500",
+  border: "border-pink-200",
+  inputBg: "bg-white",
+  inputText: "text-slate-800",
+  inputPlaceholder: "placeholder-slate-400",
+  inputFocus: "focus:ring-2 focus:ring-pink-400 focus:border-pink-400",
+  buttonPrimary: "bg-pink-500 hover:bg-pink-600 active:bg-pink-700 text-white",
   buttonSecondary:
-    "bg-indigo-50 hover:bg-indigo-100 active:bg-indigo-200 text-indigo-700",
+    "bg-rose-50 hover:bg-rose-100 active:bg-rose-200 text-rose-700",
   danger: "text-rose-600",
   success: "text-emerald-600",
 };
 
-/**
- * 🔌 BACKEND ENDPOINTS — adjust to your server routes
- */
+// ===================== BACKEND ENDPOINTS ===================== //
 const ENDPOINTS = {
   mentor: "/api/auth/register/mentor",
   mentee: "/api/auth/register/mentee",
@@ -63,25 +67,55 @@ function validateLinkedIn(url) {
   }
 }
 
+function toTitleCasePerWordCSV(input) {
+  if (!input) return "";
+  return input
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean)
+    .map((item) =>
+      item
+        .split(/\s+/)
+        .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+        .join(" ")
+    )
+    .join(", ");
+}
+
 const PASSWORD_RULES = [
-  { id: "len", label: "לפחות 8 תווים", test: (v) => (v || "").length >= 8 },
+  {
+    id: "len",
+    label: "At least 8 characters",
+    test: (v) => (v || "").length >= 8,
+  },
   {
     id: "upper",
-    label: "אות גדולה אחת לפחות (A-Z)",
+    label: "At least one uppercase (A-Z)",
     test: (v) => /[A-Z]/.test(v),
   },
   {
     id: "lower",
-    label: "אות קטנה אחת לפחות (a-z)",
+    label: "At least one lowercase (a-z)",
     test: (v) => /[a-z]/.test(v),
   },
-  { id: "digit", label: "ספרה אחת לפחות (0-9)", test: (v) => /\d/.test(v) },
+  { id: "digit", label: "At least one digit (0-9)", test: (v) => /\d/.test(v) },
   {
     id: "symbol",
-    label: "תו מיוחד אחד לפחות (!@#$…) ",
+    label: "At least one special character (!@#$…)",
     test: (v) => /[^\w\s]/.test(v),
   },
 ];
+/*
+function toTitleCaseWordsCSV(input) {
+  if (!input) return "";
+  return input
+    .split(",")
+    .map((w) => w.trim())
+    .filter(Boolean)
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+    .join(", ");
+}
+    */
 
 function PasswordHints({ value }) {
   const checks = useMemo(
@@ -92,12 +126,23 @@ function PasswordHints({ value }) {
   return (
     <div className="mt-2">
       <div className={cls("text-sm", allGood ? THEME.success : THEME.subtext)}>
-        {allGood ? "מעולה! הסיסמה חזקה." : "המלצות לסיסמה חזקה:"}
+        {allGood ? "Great! Strong password." : "Tips for a stronger password:"}
       </div>
       <ul className="mt-1 space-y-1 text-sm">
         {checks.map((c) => (
-          <li key={c.id} className={c.ok ? THEME.success : THEME.subtext}>
-            {c.ok ? "✓" : "•"} {c.label}
+          <li
+            key={c.id}
+            className={cls(
+              "flex items-center gap-1",
+              c.ok ? THEME.success : THEME.subtext
+            )}
+          >
+            {c.ok ? (
+              <span className="text-emerald-600">✓</span>
+            ) : (
+              <span>•</span>
+            )}
+            <span>{c.label}</span>
           </li>
         ))}
       </ul>
@@ -105,32 +150,34 @@ function PasswordHints({ value }) {
   );
 }
 
-function Field({ id, label, required, hint, children }) {
+function Field({ id, label, required, hint, children, error }) {
   return (
     <div className="space-y-1">
-      {hint ? (
-        <div className={cls("text-xs", THEME.subtext)}>{hint}</div>
-      ) : null}
       <label htmlFor={id} className={cls("block font-medium", THEME.text)}>
         {label} {required && <span className={THEME.danger}>*</span>}
       </label>
+      {hint ? (
+        <div className={cls("text-xs", THEME.subtext)}>{hint}</div>
+      ) : null}
       {children}
+      {error ? (
+        <div className={cls("text-sm", THEME.danger)}>{error}</div>
+      ) : null}
     </div>
   );
 }
-
 function Input(props) {
   return (
     <input
       {...props}
       className={cls(
-        "w-full rounded-2xl border px-4 py-3 outline-none",
+        "w-full rounded-xl border px-4 py-3 outline-none",
         THEME.border,
         THEME.inputBg,
         THEME.inputText,
         THEME.inputPlaceholder,
         THEME.inputFocus,
-        props.className
+        props["aria-invalid"] ? "border-rose-400 ring-1 ring-rose-300" : ""
       )}
     />
   );
@@ -141,8 +188,7 @@ function Textarea(props) {
     <textarea
       {...props}
       className={cls(
-        "w-full rounded-2xl border px-4 py-3 outline-none min-h-[96px]",
-        THEME.border,
+        "w-full rounded-2xl ring-1 ring-pink-200 px-4 py-3 outline-none min-h-[96px] shadow-sm",
         THEME.inputBg,
         THEME.inputText,
         THEME.inputPlaceholder,
@@ -163,6 +209,17 @@ export const PRESET_AVATARS = [
   "/avatars/avatar_6.png",
 ];
 
+// =============== Shared Hooks =============== //
+function useFirstErrorScroll() {
+  const errorRef = useRef(null);
+  useEffect(() => {
+    if (errorRef.current) {
+      errorRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }, []);
+  return errorRef;
+}
+
 // ===================== Forms ===================== //
 function MentorForm({ onSubmit, busy }) {
   const [form, setForm] = useState({
@@ -179,6 +236,7 @@ function MentorForm({ onSubmit, busy }) {
     image_url: "",
   });
   const [errors, setErrors] = useState({});
+  const firstErrorRef = useFirstErrorScroll();
 
   function set(k, v) {
     setForm((f) => ({ ...f, [k]: v }));
@@ -188,64 +246,87 @@ function MentorForm({ onSubmit, busy }) {
     set("phone", formatIsraeliPhone(v));
   }
 
-  function validate() {
-    const e = {};
-    if (!form.first_name) e.first_name = "שדה חובה";
-    if (!form.last_name) e.last_name = "שדה חובה";
-    if (!/^0\d{2}-\d{7}$/.test(form.phone))
-      e.phone = "מספר לא תקין, השתמשי בתבנית 055-1234567";
-    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(form.email))
-      e.email = "כתובת מייל לא תקינה";
-    if (!PASSWORD_RULES.every((r) => r.test(form.password)))
-      e.password = "השלימי את תנאי הסיסמה";
-    if (!validateLinkedIn(form.linkedin_url))
-      e.linkedin_url = "יש להזין כתובת LinkedIn תקינה";
-    setErrors(e);
-    return Object.keys(e).length === 0;
+  function handleSkillsChange(v) {
+    // מאפשר כתיבה חופשית עם פסיקים ורווחים; נירמול יתבצע ב-onBlur
+    set("skills", v);
   }
 
-  async function submit(e) {
+  function validate() {
+    const e = {};
+    if (!form.first_name) e.first_name = "Required";
+    if (!form.last_name) e.last_name = "Required";
+    if (!/^0\d{2}-\d{7}$/.test(form.phone))
+      e.phone = "Invalid format. Use 055-1234567";
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(form.email))
+      e.email = "Invalid email";
+    if (!PASSWORD_RULES.every((r) => r.test(form.password)))
+      e.password = "Password does not meet the rules";
+    if (!validateLinkedIn(form.linkedin_url))
+      e.linkedin_url = "Please enter a valid LinkedIn URL";
+    // Mentor-only required fields
+    if (!form.skills) e.skills = "Required (comma-separated)";
+    if (!form.years_experience) e.years_experience = "Required";
+    setErrors(e);
+    return e;
+  }
+
+  function submit(e) {
     e.preventDefault();
-    if (!validate()) return;
-    console.log("MentorForm.validate OK, payload:", form);
+    const eMap = validate();
+    if (Object.keys(eMap).length > 0) return; // block
     onSubmit?.(form);
   }
 
+  // locate first error field for auto-scroll
+  useEffect(() => {
+    const firstKey = Object.keys(errors)[0];
+    if (!firstKey) return;
+    const node = document.getElementById(`mentor-${firstKey}`);
+    if (node) node.scrollIntoView({ behavior: "smooth", block: "center" });
+  }, [errors]);
+
   return (
-    <form onSubmit={submit} className="space-y-5">
-      <Field label="שם פרטי" id="mentor-first" required>
+    <form onSubmit={submit} className="space-y-5" noValidate>
+      <Field
+        label="First Name"
+        id="mentor-first_name"
+        required
+        error={errors.first_name}
+      >
         <Input
-          id="mentor-first"
+          id="mentor-first_name"
           value={form.first_name}
           onChange={(e) => set("first_name", e.target.value)}
-          placeholder="הקלידי שם פרטי"
+          placeholder="Enter first name"
+          aria-invalid={!!errors.first_name}
         />
-        {errors.first_name && (
-          <div className={cls("text-sm", THEME.danger)}>
-            {errors.first_name}
-          </div>
-        )}
       </Field>
-      <Field label="שם משפחה" id="mentor-last" required>
+
+      <Field
+        label="Last Name"
+        id="mentor-last_name"
+        required
+        error={errors.last_name}
+      >
         <Input
-          id="mentor-last"
+          id="mentor-last_name"
           value={form.last_name}
           onChange={(e) => set("last_name", e.target.value)}
-          placeholder="הקלידי שם משפחה"
+          placeholder="Enter last name"
+          aria-invalid={!!errors.last_name}
         />
-        {errors.last_name && (
-          <div className={cls("text-sm", THEME.danger)}>{errors.last_name}</div>
-        )}
       </Field>
+
       <Field
-        label="מספר טלפון ליצירת קשר"
+        label="Phone Number"
         id="mentor-phone"
         required
         hint={
           <span>
-            אחידות תבנית מספרי טלפון: <b>055-1234567</b>
+            Format: <b>055-1234567</b>
           </span>
         }
+        error={errors.phone}
       >
         <Input
           id="mentor-phone"
@@ -253,92 +334,114 @@ function MentorForm({ onSubmit, busy }) {
           value={form.phone}
           onChange={(e) => handlePhone(e.target.value)}
           placeholder="055-1234567"
+          aria-invalid={!!errors.phone}
         />
-        {errors.phone && (
-          <div className={cls("text-sm", THEME.danger)}>{errors.phone}</div>
-        )}
       </Field>
-      <Field label="מייל" id="mentor-email" required>
+
+      <Field label="Email" id="mentor-email" required error={errors.email}>
         <Input
           id="mentor-email"
           type="email"
           value={form.email}
           onChange={(e) => set("email", e.target.value)}
           placeholder="name@example.com"
+          aria-invalid={!!errors.email}
         />
-        {errors.email && (
-          <div className={cls("text-sm", THEME.danger)}>{errors.email}</div>
-        )}
       </Field>
+
       <Field
-        label="סיסמא לאתר"
-        id="mentor-pass"
+        label="Password"
+        id="mentor-password"
         required
-        hint="עמדי בדרישות לסיסמה חזקה (ראו למטה)"
+        hint="Meet the strong password rules (see below)"
+        error={errors.password}
       >
         <Input
-          id="mentor-pass"
+          id="mentor-password"
           type="password"
           value={form.password}
           onChange={(e) => set("password", e.target.value)}
           placeholder="••••••••"
+          aria-invalid={!!errors.password}
         />
         <PasswordHints value={form.password} />
-        {errors.password && (
-          <div className={cls("text-sm", THEME.danger)}>{errors.password}</div>
-        )}
       </Field>
-      <Field label="לינק ל‑LinkedIn" id="mentor-ln">
-        <Input
-          id="mentor-ln"
-          value={form.linkedin_url}
-          onChange={(e) => set("linkedin_url", e.target.value)}
-          placeholder="https://www.linkedin.com/in/your-profile"
-        />
-        {errors.linkedin_url && (
-          <div className={cls("text-sm", THEME.danger)}>
-            {errors.linkedin_url}
-          </div>
-        )}
-      </Field>
+
       <Field
-        label="שפות תכנות / טכנולוגיות / תחומים"
+        label="Programming Languages / Tech"
         id="mentor-skills"
-        hint="הפרידי בפסיקים: React, Node.js, SQL"
+        required
+        hint="Comma-separated: React, Node.js, SQL"
+        error={errors.skills}
       >
         <Input
           id="mentor-skills"
           value={form.skills}
-          onChange={(e) => set("skills", e.target.value)}
-          placeholder="React, Node.js, SQL"
+          onChange={(e) => handleSkillsChange(e.target.value)}
+          onBlur={(e) => set("skills", toTitleCasePerWordCSV(e.target.value))}
+          placeholder="SQL, Front End, React"
+          aria-invalid={!!errors.skills}
         />
       </Field>
-      <Field label="שנות ניסיון" id="mentor-years">
+
+      <Field
+        label="Years of Experience"
+        id="mentor-years_experience"
+        required
+        error={errors.years_experience}
+      >
         <Input
-          id="mentor-years"
+          id="mentor-years_experience"
           value={form.years_experience}
           onChange={(e) => set("years_experience", e.target.value)}
           placeholder="5"
+          aria-invalid={!!errors.years_experience}
         />
       </Field>
-      <Field label="אזור מגורים" id="mentor-region">
+
+      <Field
+        label="LinkedIn URL"
+        id="mentor-linkedin_url"
+        hint="Example: https://www.linkedin.com/in/your-profile"
+        error={errors.linkedin_url}
+      >
+        <Input
+          id="mentor-linkedin_url"
+          value={form.linkedin_url}
+          onChange={(e) => set("linkedin_url", e.target.value)}
+          placeholder="https://www.linkedin.com/in/your-profile"
+          aria-invalid={!!errors.linkedin_url}
+        />
+      </Field>
+
+      <Field
+        label="Region"
+        id="mentor-region"
+        hint="e.g., North / South / Center / Remote"
+      >
         <Input
           id="mentor-region"
           value={form.region}
           onChange={(e) => set("region", e.target.value)}
-          placeholder="מרכז / צפון / דרום"
+          placeholder="Center"
         />
       </Field>
-      <Field label="תיאור כללי" id="mentor-about">
+
+      <Field label="About" id="mentor-short_description">
         <Textarea
-          id="mentor-about"
+          id="mentor-short_description"
           value={form.short_description}
           onChange={(e) => set("short_description", e.target.value)}
-          placeholder="ספרי מעט על עצמך, תחומי עניין, זמינות ועוד"
+          placeholder="Tell us about yourself, interests, availability, etc."
         />
       </Field>
-      <Field label="בחרי אווטר" id="mentor-avatar">
-        <div className="grid grid-cols-5 gap-2">
+
+      <Field
+        label="Choose an Avatar"
+        id="mentor-avatar"
+        hint="Click to select a profile image"
+      >
+        <div className="grid grid-cols-8 gap-2">
           {PRESET_AVATARS.map((src) => (
             <button
               key={src}
@@ -350,27 +453,29 @@ function MentorForm({ onSubmit, busy }) {
                   ? "border-fuchsia-500"
                   : "border-transparent"
               )}
+              aria-pressed={form.image_url === src}
             >
-              {" "}
               <img
                 src={src}
                 alt="avatar option"
-                className="h-16 w-16 rounded-lg object-cover"
-              />{" "}
+                className="h-10 w-10 rounded-lg object-cover"
+              />
             </button>
           ))}
         </div>
       </Field>
+
       <div className="pt-2">
         <button
           type="submit"
           disabled={busy}
           className={cls(
-            "w-full rounded-2xl px-4 py-3 font-semibold shadow-sm",
+            "w-full rounded-3xl px-8 py-6 text-xl font-extrabold shadow-sm tracking-wide",
             THEME.buttonPrimary
           )}
+          ref={Object.keys(errors).length ? firstErrorRef : null}
         >
-          {busy ? "שולחת…" : "הרשמה כמנטורית"}
+          {busy ? "Submitting…" : "Register as Mentor"}
         </button>
       </div>
     </form>
@@ -390,6 +495,7 @@ function MenteeForm({ onSubmit, busy }) {
     image_url: "",
   });
   const [errors, setErrors] = useState({});
+  const firstErrorRef = useFirstErrorScroll();
 
   function set(k, v) {
     setForm((f) => ({ ...f, [k]: v }));
@@ -401,131 +507,158 @@ function MenteeForm({ onSubmit, busy }) {
 
   function validate() {
     const e = {};
-    if (!form.first_name) e.first_name = "שדה חובה";
-    if (!form.last_name) e.last_name = "שדה חובה";
-    if (!/^0\d{2}-\d{7}$/.test(form.phone)) e.phone = "מספר לא תקין";
+    if (!form.first_name) e.first_name = "Required";
+    if (!form.last_name) e.last_name = "Required";
+    if (!/^0\d{2}-\d{7}$/.test(form.phone))
+      e.phone = "Invalid format. Use 055-1234567";
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(form.email))
-      e.email = "כתובת מייל לא תקינה";
+      e.email = "Invalid email";
     if (!PASSWORD_RULES.every((r) => r.test(form.password)))
-      e.password = "סיסמה לא עומדת בדרישות";
+      e.password = "Password does not meet the rules";
     if (!validateLinkedIn(form.linkedin_url))
-      e.linkedin_url = "לינקדאין לא תקין";
+      e.linkedin_url = "Please enter a valid LinkedIn URL";
     setErrors(e);
-    return Object.keys(e).length === 0;
+    return e;
   }
 
-  async function submit(e) {
+  function submit(e) {
     e.preventDefault();
-    if (!validate()) return;
+    const eMap = validate();
+    if (Object.keys(eMap).length > 0) return;
     onSubmit?.(form);
   }
 
+  useEffect(() => {
+    const firstKey = Object.keys(errors)[0];
+    if (!firstKey) return;
+    const node = document.getElementById(`mentee-${firstKey}`);
+    if (node) node.scrollIntoView({ behavior: "smooth", block: "center" });
+  }, [errors]);
+
   return (
-    <form onSubmit={submit} className="space-y-5">
-      <Field label="שם פרטי" id="mentee-first" required>
+    <form onSubmit={submit} className="space-y-5" noValidate>
+      <Field
+        label="First Name"
+        id="mentee-first_name"
+        required
+        error={errors.first_name}
+      >
         <Input
-          id="mentee-first"
+          id="mentee-first_name"
           value={form.first_name}
           onChange={(e) => set("first_name", e.target.value)}
-          placeholder="הקלידי שם פרטי"
+          placeholder="Enter first name"
+          aria-invalid={!!errors.first_name}
         />
-        {errors.first_name && (
-          <div className={cls("text-sm", THEME.danger)}>
-            {errors.first_name}
-          </div>
-        )}
       </Field>
-      <Field label="שם משפחה" id="mentee-last" required>
+
+      <Field
+        label="Last Name"
+        id="mentee-last_name"
+        required
+        error={errors.last_name}
+      >
         <Input
-          id="mentee-last"
+          id="mentee-last_name"
           value={form.last_name}
           onChange={(e) => set("last_name", e.target.value)}
-          placeholder="הקלידי שם משפחה"
+          placeholder="Enter last name"
+          aria-invalid={!!errors.last_name}
         />
-        {errors.last_name && (
-          <div className={cls("text-sm", THEME.danger)}>{errors.last_name}</div>
-        )}
       </Field>
+
       <Field
-        label="טלפון ליצירת קשר"
+        label="Phone Number"
         id="mentee-phone"
         required
         hint={
           <span>
-            תבנית: <b>055-1234567</b>
+            Format: <b>055-1234567</b>
           </span>
         }
+        error={errors.phone}
       >
         <Input
           id="mentee-phone"
           value={form.phone}
           onChange={(e) => handlePhone(e.target.value)}
           placeholder="055-1234567"
+          aria-invalid={!!errors.phone}
         />
-        {errors.phone && (
-          <div className={cls("text-sm", THEME.danger)}>{errors.phone}</div>
-        )}
       </Field>
-      <Field label="מייל" id="mentee-email" required>
+
+      <Field label="Email" id="mentee-email" required error={errors.email}>
         <Input
           id="mentee-email"
           type="email"
           value={form.email}
           onChange={(e) => set("email", e.target.value)}
           placeholder="name@example.com"
+          aria-invalid={!!errors.email}
         />
-        {errors.email && (
-          <div className={cls("text-sm", THEME.danger)}>{errors.email}</div>
-        )}
-      </Field>{" "}
-      <Field label="סיסמה" id="mentee-pass" required>
+      </Field>
+
+      <Field
+        label="Password"
+        id="mentee-password"
+        required
+        hint="Meet the strong password rules (see below)"
+        error={errors.password}
+      >
         <Input
-          id="mentee-pass"
+          id="mentee-password"
           type="password"
           value={form.password}
           onChange={(e) => set("password", e.target.value)}
           placeholder="••••••••"
+          aria-invalid={!!errors.password}
         />
         <PasswordHints value={form.password} />
-        {errors.password && (
-          <div className={cls("text-sm", THEME.danger)}>{errors.password}</div>
-        )}
       </Field>
-      <Field label="לינק ל‑LinkedIn" id="mentee-ln">
+
+      <Field
+        label="LinkedIn URL"
+        id="mentee-linkedin_url"
+        hint="Example: https://www.linkedin.com/in/your-profile"
+        error={errors.linkedin_url}
+      >
         <Input
-          id="mentee-ln"
+          id="mentee-linkedin_url"
           value={form.linkedin_url}
           onChange={(e) => set("linkedin_url", e.target.value)}
           placeholder="https://www.linkedin.com/in/your-profile"
+          aria-invalid={!!errors.linkedin_url}
         />
-        {errors.linkedin_url && (
-          <div className={cls("text-sm", THEME.danger)}>
-            {errors.linkedin_url}
-          </div>
-        )}
       </Field>
-      <Field label="אזור מגורים" id="mentee-region">
+
+      <Field
+        label="Region"
+        id="mentee-region"
+        hint="e.g., North / South / Center / Remote"
+      >
         <Input
           id="mentee-region"
           value={form.region}
           onChange={(e) => set("region", e.target.value)}
-          placeholder="מרכז / צפון / דרום"
+          placeholder="Center"
         />
       </Field>
-      <Field label="תיאור כללי" id="mentee-about">
+
+      <Field label="About" id="mentee-short_description">
         <Textarea
-          id="mentee-about"
+          id="mentee-short_description"
           value={form.short_description}
           onChange={(e) => set("short_description", e.target.value)}
-          placeholder="ספרי על עצמך, מטרות, תחומי עניין, ועוד"
+          placeholder="Tell us about yourself, goals, interests, etc."
         />
       </Field>
+
       <Field
-        label="בחרי אווטר"
+        label="Choose an Avatar"
         id="mentee-avatar"
-        hint="לחצי כדי לבחור תמונה מייצגת"
+        hint="Click to select a profile image"
       >
-        <div className="grid grid-cols-5 gap-2">
+        <div className="grid grid-cols-8 gap-2">
           {PRESET_AVATARS.map((src) => (
             <button
               key={src}
@@ -537,26 +670,29 @@ function MenteeForm({ onSubmit, busy }) {
                   ? "border-fuchsia-500"
                   : "border-transparent"
               )}
+              aria-pressed={form.image_url === src}
             >
               <img
                 src={src}
                 alt="avatar option"
-                className="h-16 w-16 rounded-lg object-cover"
+                className="h-10 w-10 rounded-lg object-cover"
               />
             </button>
           ))}
         </div>
       </Field>
+
       <div className="pt-2">
         <button
           type="submit"
           disabled={busy}
           className={cls(
-            "w-full rounded-2xl px-4 py-3 font-semibold shadow-sm",
+            "w-full rounded-3xl px-8 py-6 text-xl font-extrabold shadow-sm tracking-wide",
             THEME.buttonPrimary
           )}
+          ref={Object.keys(errors).length ? firstErrorRef : null}
         >
-          {busy ? "שולחת…" : "הרשמה כמנטית"}
+          {busy ? "Submitting…" : "Register as Mentee"}
         </button>
       </div>
     </form>
@@ -568,10 +704,9 @@ function RegistrationPage() {
   const [role, setRole] = useState(null); // 'mentor' | 'mentee'
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState(null);
+  // const navigate = useNavigate(); // ← uncomment when login route exists
 
   async function postToBackend(which, payload) {
-    console.log("POST start:", which, payload);
-
     setLoading(true);
     setMessage(null);
     try {
@@ -583,28 +718,32 @@ function RegistrationPage() {
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        if (res.status === 400) throw new Error("חסרים שדות חובה");
-        if (res.status === 409) throw new Error("אימייל כבר קיים במערכת");
-        throw new Error(data?.error || "שגיאה בשרת");
+        if (res.status === 400) throw new Error("Missing required fields");
+        if (res.status === 409) throw new Error("Email already exists");
+        throw new Error(data?.error || "Server error");
       }
-      setMessage({ type: "success", text: "נרשמת בהצלחה!" });
-    } catch (err) {
-      console.error("POST failed:", err);
+      setMessage({ type: "success", text: "Registration successful!" });
 
-      setMessage({ type: "error", text: err.message || "משהו השתבש, נסי שוב" });
+      // TODO: When Login page is ready, redirect here
+      // navigate("/login");
+    } catch (err) {
+      setMessage({
+        type: "error",
+        text: err.message || "Something went wrong, try again",
+      });
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <div dir="rtl" className={cls(THEME.pageBg, THEME.text)}>
-      <div className="mx-auto max-w-3xl px-5 py-10">
+    <div dir="ltr" className={cls(THEME.pageBg, THEME.text)}>
+      <div className="mx-auto w-full max-w-xl">
         {/* Title */}
         <div className="mb-6 text-center">
-          <h1 className="text-3xl font-extrabold tracking-tight">רישום לאתר</h1>
+          <h1 className="text-3xl font-extrabold tracking-tight">Sign Up</h1>
           <p className={cls("mt-2 text-sm", THEME.subtext)}>
-            בחרי את סוג המשתמשה כדי לפתוח את הטופס המתאים.
+            Choose your role to open the relevant form.
           </p>
         </div>
 
@@ -618,7 +757,7 @@ function RegistrationPage() {
               role === "mentor" ? THEME.buttonPrimary : THEME.buttonSecondary
             )}
           >
-            אני מנטורית
+            I am a Mentor
           </button>
           <button
             type="button"
@@ -628,7 +767,7 @@ function RegistrationPage() {
               role === "mentee" ? THEME.buttonPrimary : THEME.buttonSecondary
             )}
           >
-            אני מנטית
+            I am a Mentee
           </button>
         </div>
 
@@ -642,7 +781,7 @@ function RegistrationPage() {
         >
           {!role ? (
             <div className={cls("text-center", THEME.subtext)}>
-              לחצי על אחד הכפתורים למעלה כדי להתחיל רישום.
+              Click one of the buttons above to start the registration.
             </div>
           ) : role === "mentor" ? (
             <MentorForm
