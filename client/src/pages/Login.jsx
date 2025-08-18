@@ -185,9 +185,15 @@ export default function Login() {
               </Button>
 
               {/* [15] Optional footer link */}
-              <Typography variant="body2" color="text.secondary" textAlign="center">
-                Don’t have an account? <a href="/signup">Sign up</a>
-              </Typography>
+              <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  textAlign="center"
+                  sx={{ cursor: "pointer" }}
+                  onClick={() => navigate("/register")}
+                >
+                  Don’t have an account? <strong>Sign up</strong>
+                </Typography>
             </Box>
           </CardContent>
         </Card>
