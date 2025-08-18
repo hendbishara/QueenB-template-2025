@@ -2,11 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&display=swap");
 
 /* Animated pink gradient text for headings */
 .sparkleText {
-  font-family: "Baloo 2", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  font-family: "Baloo 2", system-ui, -apple-system, "Segoe UI", Roboto, Arial,
+    sans-serif;
   font-weight: 800;
   letter-spacing: 0.3px;
 
@@ -16,7 +17,7 @@
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent; /* Safari/WebKit */
-  color: transparent;                   /* others */
+  color: transparent; /* others */
 
   /* soft glow + animated sweep */
   text-shadow: 0 0 10px rgba(236, 72, 153, 0.25);
@@ -24,10 +25,13 @@
 }
 
 @keyframes pinkSparkle {
-  0%   { background-position:   0% 50%; }
-  100% { background-position: 200% 50%; }
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 200% 50%;
+  }
 }
-
 
 body {
   margin: 0;

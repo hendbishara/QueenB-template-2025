@@ -1,13 +1,15 @@
-require('dotenv').config();  
+require("dotenv").config();
 
 const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");
 const morgan = require("morgan");
 require("dotenv").config();
+require("./pool_db/db"); /////////////////////////////*************
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+const pool = require("./pool_db/db");
 
 // Middleware
 app.use(helmet());
@@ -16,12 +18,33 @@ app.use(morgan("combined"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-
 //RONTEST
-// Routes
-app.use("/api/users", require('./routes/users'));
-app.use("/api/auth", require('./routes/auth'));  
 
+// Routes
+app.use("/api/users", require("./routes/users"));
+app.use("/api/auth", require("./routes/auth"));
+
+app.use("/api/users", require("./routes/users"));
+app.use("/api/auth", require("./routes/auth")); //************* */
+
+// Test route to verify database connectivity
+// somewhere after the middlewares and before the 404 handler
+app.get("/api/db-test", async (req, res) => {
+  try {
+    // Execute a simple query: 1 + 1 should return 2
+    // If this works, it means the DB connection is active
+    const [rows] = await pool.query("SELECT 1 + 1 AS result");
+
+    // Send a JSON response with the result
+    // Expected: { ok: true, db_result: 2 }
+    res.json({ ok: true, db_result: rows[0].result });
+  } catch (err) {
+    // If something goes wrong (e.g., wrong DB credentials),
+    // log the error and return a 500 response
+    console.error("DB test failed:", err.message);
+    res.status(500).json({ ok: false, error: err.message });
+  }
+});
 
 // Health check endpoint
 app.get("/api/health", (req, res) => {
@@ -40,10 +63,10 @@ app.get("/api/health", (req, res) => {
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).json({ 
+  res.status(500).json({
     error: "Something went wrong!",
     message: err.message,
-    stack: err.stack    
+    stack: err.stack,
   });
 });
 

@@ -1,3 +1,4 @@
+
 INSERT INTO users (first_name, last_name, password, email, phone, short_description, image_url, linkedin_url, years_experience, mentor)
 VALUES
 ('Dana', 'Cohen', 'pass123', 'dana.cohen@example.com', '050-1111111', 'Full Stack Developer with a passion for teaching', NULL, 'https://linkedin.com/in/danacohen', 5, 1),

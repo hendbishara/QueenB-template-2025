@@ -1,11 +1,22 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import { 
-  ThemeProvider, 
-  createTheme, 
-  CssBaseline
-} from "@mui/material";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+import { ThemeProvider, createTheme, CssBaseline } from "@mui/material";
 import Dashboard from "./components/Dashboard";
+
+import Login from "./pages/Login";
+import ProtectedRoute from "./auth/ProtectedRoute";
+import { AuthProvider } from "./auth/AuthContext";
+
+import RegistrationPage from "./features/auth/RegistrationPage";
+
+import MenteeHomePage from "./pages/MenteeHomePage";
+import MenteeProfilePage from "./pages/MenteeProfilePage";
+import MentorProfilePage from "./pages/MentorProfilePage";
 
 import Login from "./pages/Login";
 import ProtectedRoute from "./auth/ProtectedRoute";
@@ -21,17 +32,21 @@ const theme = createTheme({
   palette: {
     primary: {
       main: "#f472b6",
+      main: "#f472b6",
     },
     secondary: {
       main: "#fb7185",
+      main: "#fb7185",
     },
     background: {
-      default: "#fff0f5", 
+      default: "#fff0f5",
     },
   },
   typography: {
     fontFamily: "'Roboto', sans-serif",
+    fontFamily: "'Roboto', sans-serif",
     h4: {
+      fontWeight: 700,
       fontWeight: 700,
     },
     h6: {
@@ -39,11 +54,9 @@ const theme = createTheme({
     },
     body1: {
       color: "#333",
-    },
-  },
+    },
+  },
 });
-
-
 
 function App() {
   return (
@@ -55,7 +68,7 @@ function App() {
           <Routes>
             {/* Public route: anyone can access */}
             <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<RegistrationPage />} />
+            <Route path="/register" element={<RegistrationPage />} />
 
             {/* Private route: only logged-in users can access */}
             <Route
@@ -64,8 +77,14 @@ function App() {
                 <ProtectedRoute>
                   <Dashboard />
                   <Route path="/mentee/home" element={<MenteeHomePage />} />
-                  <Route path="/mentee/profile" element={<MenteeProfilePage />} />
-                  <Route path="/mentor/profile" element={<MentorProfilePage />} />
+                  <Route
+                    path="/mentee/profile"
+                    element={<MenteeProfilePage />}
+                  />
+                  <Route
+                    path="/mentor/profile"
+                    element={<MentorProfilePage />}
+                  />
                 </ProtectedRoute>
               }
             />
@@ -76,7 +95,7 @@ function App() {
         </Router>
       </AuthProvider>
     </ThemeProvider>
-);
+  );
 }
 
 export default App;

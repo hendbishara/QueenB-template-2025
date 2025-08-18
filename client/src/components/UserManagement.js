@@ -31,7 +31,9 @@ function UserManagement() {
         mb={3}
       >
         <Typography variant="h5">Hello World Example</Typography>
-        <Typography variant="body5">Response from API: {users.length} users</Typography>
+        <Typography variant="body5">
+          Response from API: {users.length} users
+        </Typography>
         <Button
           variant="contained"
           onClick={() => fetchUsers()}
@@ -40,26 +42,27 @@ function UserManagement() {
           Get Users
         </Button>
       </Box>
-       <>       
-          {loading && (
-              <Box sx={{ width: "100%", mt: 2 }}>
-                <LinearProgress />
-                <Typography variant="body1" sx={{ mt: 2, textAlign: "center" }}>
-                  Loading users...
-                </Typography>
-              </Box>
-          )}
-          {!loading && (
-            <Box         
+      <>
+        {loading && (
+          <Box sx={{ width: "100%", mt: 2 }}>
+            <LinearProgress />
+            <Typography variant="body1" sx={{ mt: 2, textAlign: "center" }}>
+              Loading users...
+            </Typography>
+          </Box>
+        )}
+        {!loading && (
+          <Box
             display="flex"
             flexDirection="column"
-            justifyContent="space-between">
-              {users.map((user) => (
-                <Typography variant="body3">User: {user.name}</Typography>
-              ))}
-            </Box>
-          )} 
-        </>
+            justifyContent="space-between"
+          >
+            {users.map((user) => (
+              <Typography variant="body3">User: {user.name}</Typography>
+            ))}
+          </Box>
+        )}
+      </>
     </Box>
   );
 }
