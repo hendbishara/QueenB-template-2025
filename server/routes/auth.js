@@ -3,6 +3,9 @@ const { registerMentor, registerMentee } = require("../services/authService");
 const { signToken, requireAuth } = require("../middleware/auth");
 const pool = require("../db");
 const router = express.Router();
+const { body, validationResult } = require("express-validator");
+const bcrypt = require("bcrypt");
+
 // POST /api/auth/register/mentor
 router.post("/register/mentor", async (req, res) => {
   try {

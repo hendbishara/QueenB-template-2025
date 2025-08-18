@@ -9,6 +9,9 @@ import MenteeHomePage from "./pages/MenteeHomePage";
 import MenteeProfilePage from "./pages/MenteeProfilePage";
 import MentorProfilePage from "./pages/MentorProfilePage";
 
+import './index.css';
+
+
 import ProtectedRoute from "./auth/ProtectedRoute";
 import { AuthProvider } from "./auth/AuthContext";
 
