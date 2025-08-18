@@ -1,14 +1,13 @@
 const express = require("express");
 const router = express.Router();
 const {getMentorProfile, getPastMeetingsForMentor, getUpcomingMeetingsForMentor, approveMeeting, getPendingMeetingsForMentor, listAllMentors, createMentorshipMeeting, getProfile, getMentorById, getLessonsByMenteeId , getUpcomingLessons, getPendingLessons, getUnavailableSlotsForMentor, updateMenteeProfile} = require("../services/usersService");
-const pool = require("../pool_db/pool");
+const pool = require("../db");
 
 // GET /api/users - Get all users
 // router.get("/", (req, res) => {
 //   const users = getAllUsers();
 //   res.json(users);
 // });
-
 // GET /api/users/mentee/home
 router.get("/mentee/home", async (req, res, next) => {
   try {
@@ -43,7 +42,7 @@ router.post("/mentee/home", async (req, res, next) => {
 // GET /api/users/mentee/profile
 router.get("/mentee/profile", async (req, res, next) => {
   try {
-    const menteeId = 2;//hard coded
+    const menteeId = req.user.id; ;//hard coded
     // const menteeId = req.user.id; // token - mentee
     const profile = await getProfile(menteeId);
     res.json(profile);
@@ -122,7 +121,7 @@ router.get("/mentors/:id/unavailable-slots", async (req, res, next) => {
 // PUT /api/users/mentee/profile
 router.put("/mentee/profile", async (req, res, next) => {
   try {
-    const menteeId = 2;//hard coded
+    const menteeId = req.user.id; ;//hard coded
     const updatedFields = req.body;
 
     const updatedProfile = await updateMenteeProfile(menteeId, updatedFields);
@@ -142,7 +141,7 @@ router.put("/mentee/profile", async (req, res, next) => {
 // GET /api/users/mentor/pending-meetings
 router.get("/mentor/pending-meetings", async (req, res, next) => {
   try {
-    const mentorId = 1; // 
+    const mentorId = req.user.id; ; // 
     const meetings = await getPendingMeetingsForMentor(mentorId);
     res.json(meetings);
   } catch (err) {
@@ -165,7 +164,7 @@ router.put("/mentor/approve-meeting", async (req, res, next) => {
 // GET /api/users/mentor/past-meetings
 router.get("/mentor/past-meetings", async (req, res, next) => {
   try {
-    const mentorId = 1; // או 1
+    const mentorId = req.user.id; ; // או 1
     const meetings = await getPastMeetingsForMentor(mentorId);
     res.json(meetings);
   } catch (err) {
@@ -176,7 +175,7 @@ router.get("/mentor/past-meetings", async (req, res, next) => {
 // GET /api/users/mentor/upcoming-meetings
 router.get("/mentor/upcoming-meetings", async (req, res, next) => {
   try {
-    const mentorId = 1;
+    const mentorId = req.user.id; ;
     const meetings = await getUpcomingMeetingsForMentor(mentorId);
     res.json(meetings);
   } catch (err) {
@@ -187,7 +186,7 @@ router.get("/mentor/upcoming-meetings", async (req, res, next) => {
 // GET /api/users/mentor/profile
 router.get("/mentor/profile", async (req, res, next) => {
   try {
-    const mentorId = 1; 
+    const mentorId = req.user.id; 
     const profile = await getMentorProfile(mentorId);
 
     if (!profile) {

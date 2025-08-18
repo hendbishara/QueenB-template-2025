@@ -4,7 +4,7 @@
 //   return users;
 // }
 
-const pool = require("../pool_db/pool");
+const pool = require("../db");
 
 function toMenteeDetail(row) {
   return {

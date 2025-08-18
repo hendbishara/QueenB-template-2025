@@ -1,18 +1,18 @@
 import React from "react";
 import { AppBar, Toolbar, Typography, Button, Box } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
-import { useUser } from "../context/UserContext";
+import { useAuth } from "../auth/AuthContext";
 
 const Navbar = () => {
   const navigate = useNavigate();
-  const { user, loading } = useUser();
+  const { user, loading } = useAuth();
   if (loading) return null;
 
   let homePath = "/";
-  if (user.isLoggedIn) {
-    if (user.role === "mentee") {
+  if (user) {
+    if (user.role === "MENTEE") {
       homePath = "/mentee/home";
-    } else if (user.role === "mentor") {
+    } else if (user.role === "MENTOR") {
       homePath = "/mentor/home";
     }
   }
@@ -32,7 +32,7 @@ const Navbar = () => {
           <img
             src="/logo.png"
             alt="Queens Match Logo"
-            style={{ height:100 }} 
+            style={{ height: 100 }}
           />
         </Box>
 
@@ -44,12 +44,12 @@ const Navbar = () => {
             HOME
           </Button>
 
-          {user.isLoggedIn ? (
+          {user ? (
             <>
               <Button
                 component={Link}
                 to={
-                  user.role === "mentee"
+                  user.role === "MENTEE"
                     ? "/mentee/profile"
                     : "/mentor/profile"
                 }
@@ -69,13 +69,13 @@ const Navbar = () => {
               <Typography
                 variant="body1"
                 sx={{
-                    color: "#d63384",
-                    fontWeight: 600,
-                    fontSize: "1.5rem"
+                  color: "#d63384",
+                  fontWeight: 600,
+                  fontSize: "1.5rem",
                 }}
-                >
-                Hello, {user.name}
-            </Typography>
+              >
+                Hello, {user.first_name}
+              </Typography>
             </>
           ) : (
             <>
@@ -93,18 +93,6 @@ const Navbar = () => {
               >
                 REGISTER
               </Button>
-              <Typography
-                variant="body1"
-                sx={{
-                    color: "#d63384",
-                    fontWeight: 600,
-                    fontSize: "1.5rem",
-                    ml: 2,
-                }}
-                >
-                Hello, {user.name}
-            </Typography>
-
             </>
           )}
         </Box>

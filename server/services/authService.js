@@ -4,7 +4,7 @@
 // We keep SQL here so route files stay clean and focused on HTTP.
 
 const bcrypt = require("bcryptjs");
-const pool = require("../pool_db/db"); // your MySQL pool
+const pool = require("../db"); // your MySQL pool
 
 // Utility: turn "React, Node.js ,  SQL" -> ["React","Node.js","SQL"]
 function parseSkills(skillsCsv) {

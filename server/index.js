@@ -5,11 +5,11 @@ const cors = require("cors");
 const helmet = require("helmet");
 const morgan = require("morgan");
 require("dotenv").config();
-require("./pool_db/db"); /////////////////////////////*************
+require("./db"); /////////////////////////////*************
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-const pool = require("./pool_db/db");
+const pool = require("./db");
 
 // Middleware
 app.use(helmet());
