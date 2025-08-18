@@ -1,5 +1,5 @@
 import { useState } from "react";
-// import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { THEME, cls, roleBtnClasses } from "../../lib/theme";
 import MentorForm from "./forms/MentorForm";
 import MenteeForm from "./forms/MenteeForm";
@@ -13,7 +13,7 @@ export default function RegistrationPage() {
   const [role, setRole] = useState(null); // 'mentor' | 'mentee'
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState(null);
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
 
   async function postToBackend(which, payload) {
     setLoading(true);
@@ -32,9 +32,14 @@ export default function RegistrationPage() {
         throw new Error(data?.error || "Server error");
       }
       setMessage({ type: "success", text: "Registration successful!" });
+      //navigating to login
+      setTimeout(() => {
+       navigate("/login", {
+         replace: true,
+         state: { justRegistered: true, email: payload?.email, role: which },
+       });
+     }, 1000);
 
-      // ניווט כשעמוד הלוגין יהיה מוכן:
-      // navigate("/login");
     } catch (err) {
       setMessage({
         type: "error",
