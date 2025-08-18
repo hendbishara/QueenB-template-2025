@@ -41,34 +41,39 @@ export default function Login() {
   };
 
   // [4] Submit handler: validate → call backend via AuthContext → navigate
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
+  // [4] Submit handler: validate → call backend via AuthContext → role-based navigate
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setError("");
 
-    const msg = validate();
-    if (msg) {
-      setError(msg);
-      return;
-    }
+  const msg = validate();
+  if (msg) {
+    setError(msg);
+    return;
+  }
 
-    try {
-      setBusy(true);
-      // calls POST /api/auth/login in AuthContext, saves token & user
-      await login(email.trim(), password);
+  try {
+    setBusy(true);
 
-      // (Optional) “remember me”
-      // For now we always use localStorage (persists). If you want true
-      // "no remember", you can store token in sessionStorage when !remember.
+    // calls POST /api/auth/login in AuthContext, saves token & user
+    const user = await login(email.trim(), password); // <-- get user back
 
-      // send them back to where they tried to go (or "/")
-      navigate(from, { replace: true });
-    } catch (err) {
-      const serverMsg = err?.response?.data?.error || "Login failed";
-      setError(serverMsg);
-    } finally {
-      setBusy(false);
-    }
-  };
+    // Role-based redirect
+    const role = (user?.role || "").toUpperCase();
+    const destination =
+      role === "MENTOR" ? "/mentor/profile" :
+      role === "MENTEE" ? "/mentee/home" :
+      "/";
+
+    navigate(destination, { replace: true });
+  } catch (err) {
+    const serverMsg = err?.response?.data?.error || "Login failed";
+    setError(serverMsg);
+  } finally {
+    setBusy(false);
+  }
+};
+
 
   return (
     // [5] Page background & centering (matches your soft design)
