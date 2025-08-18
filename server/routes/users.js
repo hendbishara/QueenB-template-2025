@@ -28,7 +28,7 @@ router.post("/mentee/home", async (req, res, next) => {
   try {
     const { mentorId, meetingDate, meeting_time } = req.body;
     //const menteeId = req.user.id; // token
-    const menteeId = 2;
+    const id = req.params.id;
     if (!mentorId || !meetingDate || !meeting_time) {
       return res.status(400).json({ error: "Missing mentorId or meetingDate" });
     }
