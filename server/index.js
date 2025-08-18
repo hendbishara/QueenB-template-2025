@@ -1,3 +1,5 @@
+require('dotenv').config();  
+
 const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");
@@ -13,9 +15,14 @@ app.use(cors());
 app.use(morgan("combined"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+
 //RONTEST
 // Routes
-app.use("/api/users", require("./routes/users"));
+app.use("/api/users", require('./routes/users'));
+app.use("/api/auth", require('./routes/auth'));  
+
+
 // Health check endpoint
 app.get("/api/health", (req, res) => {
   res.json({
@@ -26,9 +33,9 @@ app.get("/api/health", (req, res) => {
 });
 
 // Root endpoint
-app.get("/", (req, res) => {
-  res.json({ message: "Welcome to QueenB API" });
-});
+//app.get("/", (req, res) => {
+//  res.json({ message: "Welcome to QueenB API" });
+//});
 
 // Error handling middleware
 app.use((err, req, res, next) => {
