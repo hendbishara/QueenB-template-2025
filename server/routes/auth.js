@@ -8,19 +8,6 @@ const { signToken, requireAuth } = require('../middleware/auth');
 
 const router = express.Router();
 
-/**
- * POST /api/auth/register
- * Creates a new user (mentor or mentee), hashes password, returns JWT.
- *
- * Required body fields:
- *   first_name, last_name, email, password, phone, mentor (0|1)
- * Optional:
- *   short_description, image_url, linkedin_url, years_experience
- */
-
-//Rotem implementing, delete later or check if needed
-
-
 
 router.post(
   '/register',
@@ -137,36 +124,6 @@ router.post(
   }
 );
 
-//loading profile, implement later, check with Ron
-
-/**
- * GET /api/auth/me
- * Verifies JWT from Authorization header, returns current user's profile.
- */
-
-/* 
-router.get('/me', requireAuth, async (req, res) => {
-  try {
-    const [[user]] = await pool.execute(
-      'SELECT id, first_name, last_name, email, phone, mentor FROM users WHERE id = ? LIMIT 1',
-      [req.user.id]
-    );
-    if (!user) return res.status(404).json({ error: 'Not found' });
-
-    return res.json({
-      id: user.id,
-      first_name: user.first_name,
-      last_name: user.last_name,
-      email: user.email,
-      phone: user.phone,
-      role: user.mentor ? 'MENTOR' : 'MENTEE'
-    });
-  } catch (err) {
-    console.error(err);
-    return res.status(500).json({ error: 'Server error' });
-  }
-});
-*/
 
 
 module.exports = router;

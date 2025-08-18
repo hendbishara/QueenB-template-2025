@@ -11,27 +11,36 @@ import Login from "./pages/Login";
 import ProtectedRoute from "./auth/ProtectedRoute";
 import { AuthProvider } from "./auth/AuthContext";
 
+import RegistrationPage from "./features/auth/RegistrationPage";
+
+import MenteeHomePage from "./pages/MenteeHomePage";
+import MenteeProfilePage from "./pages/MenteeProfilePage";
+import MentorProfilePage from "./pages/MentorProfilePage";
+
 const theme = createTheme({
   palette: {
     primary: {
-      main: "#6366f1",
+      main: "#f472b6",
     },
     secondary: {
-      main: "#ec4899",
+      main: "#fb7185",
     },
     background: {
-      default: "#f8fafc",
+      default: "#fff0f5", 
     },
   },
   typography: {
-    fontFamily: "Roboto, Arial, sans-serif",
+    fontFamily: "'Roboto', sans-serif",
     h4: {
-      fontWeight: 600,
+      fontWeight: 700,
     },
     h6: {
       fontWeight: 500,
     },
-  },
+    body1: {
+      color: "#333",
+    },
+  },
 });
 
 
@@ -46,6 +55,7 @@ function App() {
           <Routes>
             {/* Public route: anyone can access */}
             <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<RegistrationPage />} />
 
             {/* Private route: only logged-in users can access */}
             <Route
@@ -53,6 +63,9 @@ function App() {
               element={
                 <ProtectedRoute>
                   <Dashboard />
+                  <Route path="/mentee/home" element={<MenteeHomePage />} />
+                  <Route path="/mentee/profile" element={<MenteeProfilePage />} />
+                  <Route path="/mentor/profile" element={<MentorProfilePage />} />
                 </ProtectedRoute>
               }
             />

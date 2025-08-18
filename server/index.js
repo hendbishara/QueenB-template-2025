@@ -6,10 +6,6 @@ const helmet = require("helmet");
 const morgan = require("morgan");
 require("dotenv").config();
 
-const authRouter = require('./routes/auth');
-const mentorRouter = require('./routes/mentor');
-const menteeRouter = require('./routes/mentee');
-
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -23,9 +19,9 @@ app.use(express.urlencoded({ extended: true }));
 
 //RONTEST
 // Routes
-app.use("/api/mentee", menteeRouter);
-app.use("/api/auth", authRouter);  
-app.use("/api/mentor", mentorRouter);
+app.use("/api/users", require('./routes/users'));
+app.use("/api/auth", require('./routes/auth'));  
+
 
 // Health check endpoint
 app.get("/api/health", (req, res) => {
