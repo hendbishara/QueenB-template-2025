@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Lessons from "../components/Lessons";
 import MenteeProfileEdit from "../components/MenteeProfileEdit";
@@ -19,6 +20,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import CameraAltIcon from "@mui/icons-material/CameraAlt";
 
 const MenteeProfilePage = () => {
+  const { id } = useParams();
   const [mentee, setMentee] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState(0);
@@ -28,7 +30,7 @@ const MenteeProfilePage = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await axios.get("/api/users/mentee/profile");
+        const response = await axios.get(`/api/users/mentee/${id}/profile`);
         setMentee(response.data);
       } catch (err) {
         console.error("Failed to fetch mentee profile", err);
@@ -37,8 +39,8 @@ const MenteeProfilePage = () => {
       }
     };
 
-    fetchProfile();
-  }, []);
+    if (id) fetchProfile();
+  }, [id]);
 
   if (loading) {
     return (

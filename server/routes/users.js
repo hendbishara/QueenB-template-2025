@@ -199,4 +199,31 @@ router.get("/mentor/profile", async (req, res, next) => {
   }
 });
 
+
+// GET /api/users/mentor/:id/profile  (per-ID)
+router.get("/mentor/:id/profile", async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const profile = await getMentorProfile(id); // or getMentorById(id) if you prefer
+    if (!profile) return res.status(404).json({ error: "Mentor not found" });
+    res.json(profile);
+  } catch (err) {
+    next(err);
+  }
+});
+
+// GET /api/users/mentee/:id/profile  (per-ID)
+router.get("/mentee/:id/profile", async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const profile = await getProfile(id);
+    if (!profile) return res.status(404).json({ error: "Mentee not found" });
+    res.json(profile);
+  } catch (err) {
+    next(err);
+  }
+});
+
+
+
 module.exports = router;
