@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const {getMentorProfile, getPastMeetingsForMentor, getUpcomingMeetingsForMentor, approveMeeting, getPendingMeetingsForMentor, listAllMentors, createMentorshipMeeting, getProfile, getMentorById, getLessonsByMenteeId , getUpcomingLessons, getPendingLessons, getUnavailableSlotsForMentor, updateMenteeProfile} = require("../services/usersService");
 const pool = require("../db");
+const { requireAuth } = require("../middleware/auth");
 
 // GET /api/users - Get all users
 // router.get("/", (req, res) => {
@@ -23,13 +24,13 @@ router.get("/mentee/home", async (req, res, next) => {
 });
 
 // POST /api/users/mentee/home
-router.post("/mentee/home", async (req, res, next) => {
+router.post("/mentee/home", requireAuth, async (req, res, next) => {
   try {
     const { mentorId, meetingDate, meeting_time } = req.body;
-    //const menteeId = req.user.id; // token
-    const id = req.params.id;
+    const menteeId = req.user.id; 
+
     if (!mentorId || !meetingDate || !meeting_time) {
-      return res.status(400).json({ error: "Missing mentorId or meetingDate" });
+      return res.status(400).json({ error: "Missing mentorId or meetingDate or meeting_time" });
     }
 
     const result = await createMentorshipMeeting(menteeId, mentorId, meetingDate, meeting_time);
@@ -38,7 +39,6 @@ router.post("/mentee/home", async (req, res, next) => {
     next(err);
   }
 });
-
 // GET /api/users/mentee/profile
 router.get("/mentee/profile", async (req, res, next) => {
   try {
@@ -119,9 +119,9 @@ router.get("/mentors/:id/unavailable-slots", async (req, res, next) => {
 });
 
 // PUT /api/users/mentee/profile
-router.put("/mentee/profile", async (req, res, next) => {
+router.put("/mentee/profile", requireAuth, async (req, res, next) => {
   try {
-    const menteeId = req.user.id; ;//hard coded
+    const menteeId = req.user.id;
     const updatedFields = req.body;
 
     const updatedProfile = await updateMenteeProfile(menteeId, updatedFields);
@@ -135,7 +135,22 @@ router.put("/mentee/profile", async (req, res, next) => {
     next(err);
   }
 });
+router.put("/mentee/:id/profile", async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const updatedFields = req.body;
 
+    const updatedProfile = await updateMenteeProfile(id, updatedFields);
+
+    if (!updatedProfile) {
+      return res.status(404).json({ error: "Mentee not found or not updated" });
+    }
+
+    res.json(updatedProfile);
+  } catch (err) {
+    next(err);
+  }
+});
 
 
 // GET /api/users/mentor/pending-meetings

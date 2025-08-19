@@ -126,7 +126,7 @@ import {
   Button
 } from "@mui/material";
 import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
-import axios from "axios";
+import api from "../api";
 
 const ImageUploader = ({ imageUrl, onImageChange }) => {
   const fileInputRef = useRef(null);
@@ -145,7 +145,7 @@ const ImageUploader = ({ imageUrl, onImageChange }) => {
     reader.onloadend = async () => {
       const base64 = reader.result;
       try {
-        await axios.put("/api/users/mentee/profile", { image_url: base64 });
+        await api.put("/users/mentee/profile", { image_url: base64 });
         onImageChange(base64);
         setDialogOpen(false);
       } catch (err) {
@@ -158,7 +158,7 @@ const ImageUploader = ({ imageUrl, onImageChange }) => {
   const handlePasteUrl = async () => {
     if (!urlInput.trim()) return;
     try {
-      await axios.put("/api/users/mentee/profile", { image_url: urlInput.trim() });
+      await api.put("/users/mentee/profile", { image_url: urlInput.trim() });
       onImageChange(urlInput.trim());
       setDialogOpen(false);
       setUrlInput("");
@@ -239,7 +239,7 @@ const ImageUploader = ({ imageUrl, onImageChange }) => {
         <DialogActions>
           <Button onClick={() => setDialogOpen(false)}>Cancel</Button>
           <Button variant="contained" onClick={handlePasteUrl}>
-            Use URL
+            Save
           </Button>
         </DialogActions>
       </Dialog>

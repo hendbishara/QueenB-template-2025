@@ -209,45 +209,43 @@ async function getUnavailableSlotsForMentor(mentorId) {
 }
 
 async function updateMenteeProfile(menteeId, updatedFields) {
-  const {
-    first_name,
-    last_name,
-    email,
-    phone,
-    image_url,
-    linkedin_url,
-    short_description,
-    region
-  } = updatedFields;
+  // הסרת שדות לא רלוונטיים
+  const allowedFields = [
+    "first_name",
+    "last_name",
+    "email",
+    "phone",
+    "image_url",
+    "linkedin_url",
+    "short_description",
+    "region"
+  ];
+
+  const setClauses = [];
+  const values = [];
+
+  for (const field of allowedFields) {
+    if (field in updatedFields) {
+      setClauses.push(`${field} = ?`);
+      values.push(updatedFields[field]);
+    }
+  }
+
+  if (setClauses.length === 0) {
+    throw new Error("No valid fields provided for update");
+  }
 
   const query = `
     UPDATE users
-    SET 
-      first_name = ?, 
-      last_name = ?, 
-      email = ?, 
-      phone = ?, 
-      image_url = ?, 
-      linkedin_url = ?, 
-      short_description = ?, 
-      region = ?
+    SET ${setClauses.join(", ")}
     WHERE id = ? AND mentor = 0
   `;
+  values.push(menteeId);
 
-  await pool.query(query, [
-    first_name,
-    last_name,
-    email,
-    phone,
-    image_url,
-    linkedin_url,
-    short_description,
-    region,
-    menteeId
-  ]);
-
+  await pool.query(query, values);
   return { success: true, message: "Profile updated successfully." };
 }
+
 
 
 //mentor:

@@ -7,7 +7,8 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import axios from "axios";
+//import axios from "axios";
+import api from "../api";
 
 const HOURS = [
   "09:00", "10:00", "11:00", "12:00",
@@ -24,7 +25,7 @@ const ScheduleMeeting = ({ mentorId, menteeId }) => {
   useEffect(() => {
     const fetchUnavailableSlots = async () => {
       try {
-        const response = await axios.get(`/api/users/mentors/${mentorId}/unavailable-slots`);
+        const response = await api.get(`/users/mentors/${mentorId}/unavailable-slots`);
         console.log("Unavailable slots:", response.data);
         setUnavailableSlots(response.data);
       } catch (err) {
@@ -52,11 +53,11 @@ const ScheduleMeeting = ({ mentorId, menteeId }) => {
 
     setLoading(true);
     try {
-      await axios.post("/api/users/mentee/home", {
+      await api.post("/users/mentee/home", {
         mentorId,
         meetingDate: date,
         meeting_time: time
-          });
+      });
       setSuccess("Meeting request sent!");
       setDate("");
       setTime("");
