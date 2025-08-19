@@ -39,7 +39,10 @@ export default function RegistrationPage() {
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
         if (res.status === 400) throw new Error("Missing required fields");
-        if (res.status === 409) throw new Error("Email already exists");
+        if (res.status === 409)
+          throw new Error(
+            "This email is already registered. Please go to the Login page to sign in."
+          );
         throw new Error(data?.error || "Server error");
       }
 
@@ -71,7 +74,7 @@ export default function RegistrationPage() {
     <div dir="ltr" className={cls(THEME.pageBg, THEME.text)}>
       {/* CHANGED: באנר גדול, בולט, קבוע למעלה, בלי כפתורים */}
       {message && (
-        <div className="fixed top-0 inset-x-0 z-50">
+        <div className="fixed inset-x-0 z-50 pointer-events-none top-[64px]">
           <div
             className={cls(
               "mx-auto max-w-4xl rounded-b-3xl shadow-xl border",
