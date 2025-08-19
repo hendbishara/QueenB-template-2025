@@ -21,7 +21,7 @@ const MentorProfilePage = () => {
   useEffect(() => {
     const fetchMentorProfile = async () => {
       try {
-        const response = await api.get(`/api/users/mentor/${id}/profile`);
+        const response = await api.get(`/users/mentor/${id}/profile`);
         setMentor(response.data);
       } catch (error) {
         console.error("Error fetching mentor profile:", error);
