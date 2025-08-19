@@ -5,6 +5,7 @@ import PasswordHints from "../../../components/ui/PasswordHints";
 import PasswordInput from "../../../components/ui/PasswordInput";
 import { PRESET_AVATARS } from "../../../data/avatars";
 import { THEME, cls } from "../../../lib/theme";
+import ImagePicker from "../../../components/forms/ImagePicker";
 
 /**
  * שדות משותפים לשני התפקידים.
@@ -166,32 +167,17 @@ export default function BaseUserFields({
       </Field>
 
       <Field
-        label="Choose an Avatar"
+        label="Profile Picture"
         id={`${idPrefix}-avatar`}
-        hint="Click to select a profile image"
+        hint="Upload, paste URL, or choose a default avatar"
       >
-        <div className="grid grid-cols-8 gap-2">
-          {PRESET_AVATARS.map((src) => (
-            <button
-              key={src}
-              type="button"
-              onClick={() => set("image_url", src)}
-              className={cls(
-                "rounded-xl border-2 p-1",
-                form.image_url === src
-                  ? "border-fuchsia-500"
-                  : "border-transparent"
-              )}
-              aria-pressed={form.image_url === src}
-            >
-              <img
-                src={src}
-                alt="avatar option"
-                className="h-18 w-18 rounded-lg object-cover"
-              />
-            </button>
-          ))}
-        </div>
+        <ImagePicker
+          value={form.image_url}
+          onChange={(val) => set("image_url", val)}
+          presetAvatars={PRESET_AVATARS}
+          // אופציונלי: להחליף צבע מסגרת
+          // selectedClass="border-pink-500"
+        />
       </Field>
     </>
   );
