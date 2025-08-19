@@ -1,5 +1,6 @@
 import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
+import Navbar from "./components/Navbar";
 import { ThemeProvider, createTheme, CssBaseline } from "@mui/material";
 
 import Login from "./pages/Login";
@@ -9,8 +10,7 @@ import MenteeHomePage from "./pages/MenteeHomePage";
 import MenteeProfilePage from "./pages/MenteeProfilePage";
 import MentorProfilePage from "./pages/MentorProfilePage";
 
-import './index.css';
-
+import "./index.css";
 
 import ProtectedRoute from "./auth/ProtectedRoute";
 import { AuthProvider } from "./auth/AuthContext";
@@ -36,18 +36,17 @@ const theme = createTheme({
   },
 });
 
-
-
 function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <AuthProvider>
+        <Navbar />
         <Routes>
           {/* Public routes */}
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<RegistrationPage />} />
-          
+
           <Route
             path="/"
             element={
@@ -62,7 +61,7 @@ function App() {
             path="/mentee/home"
             element={
               <ProtectedRoute>
-                <ProtectedRoute roles={['MENTEE']}></ProtectedRoute>
+                <ProtectedRoute roles={["MENTEE"]}></ProtectedRoute>
                 <MenteeHomePage />
               </ProtectedRoute>
             }
@@ -70,7 +69,7 @@ function App() {
           <Route
             path="/mentee/:id/profile"
             element={
-              <ProtectedRoute roles={['MENTEE']}>
+              <ProtectedRoute roles={["MENTEE"]}>
                 <MenteeProfilePage />
               </ProtectedRoute>
             }
@@ -78,7 +77,7 @@ function App() {
           <Route
             path="/mentor/:id/profile"
             element={
-              <ProtectedRoute roles={['MENTOR']}>
+              <ProtectedRoute roles={["MENTOR"]}>
                 <MentorProfilePage />
               </ProtectedRoute>
             }
