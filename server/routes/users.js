@@ -1,5 +1,7 @@
 const express = require("express");
 const router = express.Router();
+const pool = require("../db");
+const { requireAuth } = require("../middleware/auth"); // ✅ הוספתי
 const {
   getMentorProfile,
   getPastMeetingsForMentor,
@@ -16,8 +18,6 @@ const {
   getUnavailableSlotsForMentor,
   updateMenteeProfile,
 } = require("../services/usersService");
-const pool = require("../db");
-const { requireAuth } = require("../middleware/auth"); // ✅ הוספתי
 
 // GET /api/users - Get all users
 // router.get("/", (req, res) => {
@@ -44,6 +44,34 @@ router.get("/mentee/home", async (req, res, next) => {
     next(err);
   }
 });
+
+router.get("/skills", async (req, res, next) => {
+  try {
+    const [rows] = await pool.query(
+      "SELECT DISTINCT skill_name FROM mentor_skills ORDER BY skill_name"
+    );
+    const skills = rows.map((row) => row.skill_name);
+    res.json(skills);
+  } catch (err) {
+    next(err);
+  }
+});
+
+// GET /api/users/mentors/:id
+router.get("/mentors/:id", async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    const mentor = await getMentorById(id);
+    if (!mentor) {
+      return res.status(404).json({ error: "Mentor not found" });
+    }
+    res.json(mentor);
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.use(requireAuth); // ✅ תוסיפי כאן
 
 // POST /api/users/mentee/home
 router.post("/mentee/home", async (req, res, next) => {
@@ -78,34 +106,6 @@ router.get("/mentee/profile", async (req, res, next) => {
     next(err);
   }
 });
-
-router.get("/skills", async (req, res, next) => {
-  try {
-    const [rows] = await pool.query(
-      "SELECT DISTINCT skill_name FROM mentor_skills ORDER BY skill_name"
-    );
-    const skills = rows.map((row) => row.skill_name);
-    res.json(skills);
-  } catch (err) {
-    next(err);
-  }
-});
-
-// GET /api/users/mentors/:id
-router.get("/mentors/:id", async (req, res, next) => {
-  try {
-    const id = req.params.id;
-    const mentor = await getMentorById(id);
-    if (!mentor) {
-      return res.status(404).json({ error: "Mentor not found" });
-    }
-    res.json(mentor);
-  } catch (err) {
-    next(err);
-  }
-});
-
-router.use(requireAuth); // ✅ תוסיפי כאן
 
 router.get("/mentee/:id/lessons", async (req, res, next) => {
   try {
