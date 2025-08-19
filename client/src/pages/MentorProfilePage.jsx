@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import {
   Box,
@@ -13,6 +14,7 @@ import axios from "axios";
 import Lessons from "../components/Lessons";
 
 const MentorProfilePage = () => {
+  const { id } = useParams(); // <-- /mentor/:id/profile
   const [mentor, setMentor] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState(0);
@@ -20,7 +22,7 @@ const MentorProfilePage = () => {
   useEffect(() => {
     const fetchMentorProfile = async () => {
       try {
-        const response = await axios.get("/api/users/mentor/profile");
+        const response = await axios.get(`/api/users/mentor/${id}/profile`);
         setMentor(response.data);
       } catch (error) {
         console.error("Error fetching mentor profile:", error);
@@ -28,8 +30,8 @@ const MentorProfilePage = () => {
         setLoading(false);
       }
     };
-    fetchMentorProfile();
-  }, []);
+    if (id) fetchMentorProfile();
+  }, [id]);
 
   // const handleApprove = async (menteeId, meeting_date) => {
   //   try {

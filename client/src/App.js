@@ -14,6 +14,7 @@ import './index.css';
 
 import ProtectedRoute from "./auth/ProtectedRoute";
 import { AuthProvider } from "./auth/AuthContext";
+import { useAuth } from "./auth/AuthContext";
 
 const theme = createTheme({
   palette: {
@@ -35,6 +36,8 @@ const theme = createTheme({
   },
 });
 
+
+
 function App() {
   return (
     <ThemeProvider theme={theme}>
@@ -44,36 +47,38 @@ function App() {
           {/* Public routes */}
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<RegistrationPage />} />
-
-          {/* Protected routes */}
+          
           <Route
             path="/"
             element={
               <ProtectedRoute>
-                <Dashboard />
+                <Login />
               </ProtectedRoute>
             }
           />
+
+          {/* Protected routes */}
           <Route
             path="/mentee/home"
             element={
               <ProtectedRoute>
+                <ProtectedRoute roles={['MENTEE']}></ProtectedRoute>
                 <MenteeHomePage />
               </ProtectedRoute>
             }
           />
           <Route
-            path="/mentee/profile"
+            path="/mentee/:id/profile"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute roles={['MENTEE']}>
                 <MenteeProfilePage />
               </ProtectedRoute>
             }
           />
           <Route
-            path="/mentor/profile"
+            path="/mentor/:id/profile"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute roles={['MENTOR']}>
                 <MentorProfilePage />
               </ProtectedRoute>
             }

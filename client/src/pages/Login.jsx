@@ -61,8 +61,8 @@ const handleSubmit = async (e) => {
     // Role-based redirect
     const role = (user?.role || "").toUpperCase();
     const destination =
-      role === "MENTOR" ? "/mentor/profile" :
-      role === "MENTEE" ? "/mentee/home" :
+      role === "MENTOR" ? `/mentor/${user.id}/profile` :
+      role === "MENTEE" ? `/mentee/home` :
       "/";
 
     navigate(destination, { replace: true });
