@@ -2,6 +2,7 @@ import Field from "../../../components/ui/Field";
 import Input from "../../../components/ui/Input";
 import Textarea from "../../../components/ui/Textarea";
 import PasswordHints from "../../../components/ui/PasswordHints";
+import PasswordInput from "../../../components/ui/PasswordInput";
 import { PRESET_AVATARS } from "../../../data/avatars";
 import { THEME, cls } from "../../../lib/theme";
 
@@ -18,6 +19,7 @@ export default function BaseUserFields({
   onPhoneChange, // (val) => void
   showAboutCounter = false,
   maxAbout = 500,
+  aboutHintText,
 }) {
   return (
     <>
@@ -99,13 +101,12 @@ export default function BaseUserFields({
         hint="Meet the strong password rules (see below)"
         error={errors.password}
       >
-        <Input
+        <PasswordInput
           id={`${idPrefix}-password`}
-          type="password"
           value={form.password}
           onChange={(e) => set("password", e.target.value)}
-          placeholder="••••••••"
-          aria-invalid={!!errors.password}
+          placeholder="Password"
+          invalid={!!errors.password}
         />
         <PasswordHints value={form.password} />
       </Field>
@@ -142,6 +143,7 @@ export default function BaseUserFields({
         label="About"
         id={`${idPrefix}-short_description`}
         error={errors.short_description}
+        hint={aboutHintText}
       >
         <Textarea
           id={`${idPrefix}-short_description`}
@@ -159,11 +161,6 @@ export default function BaseUserFields({
         {showAboutCounter && (
           <div className="mt-1 text-xs text-slate-500">
             {form.short_description.length}/{maxAbout} characters
-          </div>
-        )}
-        {errors.short_description && (
-          <div className="text-sm text-rose-600">
-            {errors.short_description}
           </div>
         )}
       </Field>

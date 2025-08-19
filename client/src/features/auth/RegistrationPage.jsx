@@ -34,12 +34,11 @@ export default function RegistrationPage() {
       setMessage({ type: "success", text: "Registration successful!" });
       //navigating to login
       setTimeout(() => {
-       navigate("/login", {
-         replace: true,
-         state: { justRegistered: true, email: payload?.email, role: which },
-       });
-     }, 1000);
-
+        navigate("/login", {
+          replace: true,
+          state: { justRegistered: true, email: payload?.email, role: which },
+        });
+      }, 1000);
     } catch (err) {
       setMessage({
         type: "error",
@@ -52,7 +51,15 @@ export default function RegistrationPage() {
 
   return (
     <div dir="ltr" className={cls(THEME.pageBg, THEME.text)}>
-      <div className="mx-auto w-full max-w-xl">
+      {/* <div className="mx-auto w-full max-w-xl"> */}
+      <div className="mx-auto w-full max-w-xl -mt-32">
+        <div className="flex justify-center mb-4">
+          <img
+            src="/logo.png" // קובץ תחת public נחשף כ- /logo.png
+            alt="Queens Match Logo"
+            className="h-24 w-auto drop-shadow-sm"
+          />
+        </div>
         {/* Title */}
         <div className="mb-6 text-center">
           <h1 className="text-3xl font-extrabold tracking-tight">Sign Up</h1>

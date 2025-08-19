@@ -86,6 +86,7 @@ export default function MentorForm({ onSubmit, busy }) {
         onPhoneChange={handlePhone}
         showAboutCounter
         maxAbout={MAX_ABOUT}
+        aboutHintText="Minimum 30 characters"
       />
 
       {/* Mentor-only fields */}
