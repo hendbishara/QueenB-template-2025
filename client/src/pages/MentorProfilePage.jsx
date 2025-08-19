@@ -10,7 +10,7 @@ import {
   Tab,
   Divider,
 } from "@mui/material";
-import axios from "axios";
+import api from "../api";
 import Lessons from "../components/Lessons";
 
 const MentorProfilePage = () => {
@@ -22,7 +22,7 @@ const MentorProfilePage = () => {
   useEffect(() => {
     const fetchMentorProfile = async () => {
       try {
-        const response = await axios.get(`/api/users/mentor/${id}/profile`);
+        const response = await api.get(`/api/users/mentor/${id}/profile`);
         setMentor(response.data);
       } catch (error) {
         console.error("Error fetching mentor profile:", error);
@@ -45,7 +45,7 @@ const MentorProfilePage = () => {
   // };
   const handleApprove = async (menteeId, meeting_date, meeting_time) => {
     try {
-      await axios.put("/api/users/mentor/approve-meeting", {
+      await api.put("/api/users/mentor/approve-meeting", {
         menteeId,
         meetingDate: meeting_date,
         meetingTime: meeting_time

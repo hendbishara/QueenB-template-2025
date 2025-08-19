@@ -4,7 +4,6 @@ import Navbar from "../components/Navbar";
 import Lessons from "../components/Lessons";
 import MenteeProfileEdit from "../components/MenteeProfileEdit";
 import ImageUploader from "../components/ImageUploader";
-import axios from "axios";
 import {
   Typography,
   Avatar,
@@ -18,6 +17,7 @@ import {
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import CameraAltIcon from "@mui/icons-material/CameraAlt";
+import api from "../api";
 
 const MenteeProfilePage = () => {
   const { id } = useParams();
@@ -30,7 +30,9 @@ const MenteeProfilePage = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await axios.get(`/api/users/mentee/${id}/profile`);
+        const response = id
+          ? await api.get(`/users/mentee/${id}/profile`)
+          : await api.get("/users/mentee/profile");
         setMentee(response.data);
       } catch (err) {
         console.error("Failed to fetch mentee profile", err);
@@ -39,7 +41,7 @@ const MenteeProfilePage = () => {
       }
     };
 
-    if (id) fetchProfile();
+    fetchProfile();
   }, [id]);
 
   if (loading) {
@@ -74,7 +76,7 @@ const MenteeProfilePage = () => {
             onClose={() => setIsEditing(false)}
             onSave={async () => {
               try {
-                const res = await axios.get("/api/users/mentee/profile");
+                const res = await api.get("/users/mentee/profile");
                 setMentee(res.data);
               } catch (err) {
                 console.error("Failed to refresh profile after update", err);
@@ -113,7 +115,6 @@ const MenteeProfilePage = () => {
             </Tooltip>
 
             <Box sx={{ textAlign: "center", minWidth: 250 }}>
-              
               <ImageUploader
                 open={showImageUploader}
                 imageUrl={mentee.image_url}
@@ -171,16 +172,16 @@ const MenteeProfilePage = () => {
         )}
         {activeTab === 1 && (
           <Lessons
-          userId={mentee.id}
-          apiPath="upcoming-lessons"
-          emptyMessage="No past lessons found."
-        />
+            userId={mentee.id}
+            apiPath="upcoming-lessons"
+            emptyMessage="No upcoming lessons found."
+          />
         )}
         {activeTab === 2 && (
           <Lessons
             userId={mentee.id}
             apiPath="pending-lessons"
-            emptyMessage="No past lessons found."
+            emptyMessage="No pending lessons found."
           />
         )}
       </Box>

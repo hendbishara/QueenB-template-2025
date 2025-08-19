@@ -5,9 +5,13 @@ import {
   TextField,
   Button,
   Typography,
-  Stack,MenuItem, Select, InputLabel, FormControl
+  Stack,
+  MenuItem,
+  Select,
+  InputLabel,
+  FormControl,
 } from "@mui/material";
-import axios from "axios";
+import api from "../api";
 
 const MenteeProfileEdit = ({ profile, onClose, onSave }) => {
   const [formData, setFormData] = useState({ ...profile });
@@ -23,11 +27,16 @@ const MenteeProfileEdit = ({ profile, onClose, onSave }) => {
     setError(null);
 
     try {
-        const filteredData = Object.fromEntries(
-            Object.entries(formData).filter(([_, v]) => v !== undefined && v !== null)
-          );
-        const response = await axios.put("/api/users/mentee/profile", filteredData);
-        onSave(response.data);
+      const filteredData = Object.fromEntries(
+        Object.entries(formData).filter(([_, v]) => v !== undefined && v !== null)
+      );
+
+      const url = formData.id
+      ? `/api/users/mentee/${formData.id}/profile`
+      : `/api/users/mentee/profile`;
+
+      const response = await api.put(url, filteredData);
+      onSave(response.data);
     } catch (err) {
       console.error("Failed to update profile", err);
       setError("Failed to save changes.");
@@ -43,9 +52,11 @@ const MenteeProfileEdit = ({ profile, onClose, onSave }) => {
       </Typography>
 
       <Stack spacing={2}>
-      <ImageUploader
+        <ImageUploader
           imageUrl={formData.image_url}
-          onImageChange={(newImage) => setFormData({ ...formData, image_url: newImage })}
+          onImageChange={(newImage) =>
+            setFormData({ ...formData, image_url: newImage })
+          }
         />
         <TextField
           label="First Name"
@@ -78,17 +89,17 @@ const MenteeProfileEdit = ({ profile, onClose, onSave }) => {
           fullWidth
         />
         <FormControl fullWidth>
-        <InputLabel id="region-label">Region</InputLabel>
-        <Select
+          <InputLabel id="region-label">Region</InputLabel>
+          <Select
             labelId="region-label"
             value={formData.region || ""}
             label="Region"
             onChange={handleChange("region")}
-        >
+          >
             <MenuItem value="North">North</MenuItem>
             <MenuItem value="Center">Center</MenuItem>
             <MenuItem value="South">South</MenuItem>
-        </Select>
+          </Select>
         </FormControl>
         <TextField
           label="Short Description"
@@ -98,7 +109,6 @@ const MenteeProfileEdit = ({ profile, onClose, onSave }) => {
           rows={3}
           fullWidth
         />
-
 
         {error && (
           <Typography color="error" variant="body2">
@@ -110,7 +120,12 @@ const MenteeProfileEdit = ({ profile, onClose, onSave }) => {
           <Button variant="outlined" onClick={onClose}>
             Cancel
           </Button>
-          <Button variant="contained" color="primary" onClick={handleSubmit} disabled={saving}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleSubmit}
+            disabled={saving}
+          >
             {saving ? "Saving..." : "Save Changes"}
           </Button>
         </Box>
