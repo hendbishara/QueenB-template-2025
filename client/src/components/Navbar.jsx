@@ -1,12 +1,15 @@
 import React from "react";
 import { AppBar, Toolbar, Typography, Button, Box } from "@mui/material";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
 
 const Navbar = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user, loading } = useAuth();
   if (loading) return null;
+
+
 
   let homePath = "/";
   if (user) {
@@ -16,6 +19,8 @@ const Navbar = () => {
       homePath = "/mentor/home";
     }
   }
+
+  const isMentorPage = /^\/mentor\/[^/]+\/profile$/.test(location.pathname);
 
 
  // Build per-ID profile path for the logged-in user
@@ -45,12 +50,14 @@ const Navbar = () => {
         </Box>
 
         <Box display="flex" alignItems="center" gap={3}>
-          <Button
-            onClick={() => navigate(homePath)}
-            sx={{ color: "#d63384", fontWeight: 600, fontSize: "1.25rem" }}
-          >
-            HOME
-          </Button>
+          {!isMentorPage &&(  
+            <Button
+              onClick={() => navigate(homePath)}
+              sx={{ color: "#d63384", fontWeight: 600, fontSize: "1.25rem" }}
+            >
+              HOME
+            </Button>
+          )}
 
           {user ? (
             <>
