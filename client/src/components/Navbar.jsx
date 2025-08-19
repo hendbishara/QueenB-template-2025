@@ -17,6 +17,14 @@ const Navbar = () => {
     }
   }
 
+
+ // Build per-ID profile path for the logged-in user
+ const profilePath = user
+   ? (user.role === "MENTEE"
+       ? `/mentee/${user.id}/profile`
+       : `/mentor/${user.id}/profile`)
+   : "/login";
+
   return (
     <AppBar
       position="static"
@@ -48,11 +56,7 @@ const Navbar = () => {
             <>
               <Button
                 component={Link}
-                to={
-                  user.role === "MENTEE"
-                    ? "/mentee/profile"
-                    : "/mentor/profile"
-                }
+                to={profilePath}
                 sx={{ color: "#d63384", fontWeight: 600, fontSize: "1.25rem" }}
               >
                 MY PROFILE
