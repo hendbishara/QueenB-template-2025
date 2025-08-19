@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import Navbar from "../components/Navbar";
 import {
   Box,
   Typography,
@@ -65,7 +64,6 @@ const MentorProfilePage = () => {
   if (loading) {
     return (
       <>
-        <Navbar />
         <Box display="flex" justifyContent="center" mt={5}>
           <CircularProgress />
         </Box>
@@ -76,7 +74,6 @@ const MentorProfilePage = () => {
   if (!mentor) {
     return (
       <>
-        <Navbar />
         <Box display="flex" justifyContent="center" mt={5}>
           <Typography variant="h6">Mentor profile not found.</Typography>
         </Box>
@@ -86,7 +83,6 @@ const MentorProfilePage = () => {
 
   return (
     <>
-      <Navbar />
       <Box sx={{ maxWidth: "900px", mx: "auto", mt: 4, px: 3 }}>
         <Box
           sx={{
