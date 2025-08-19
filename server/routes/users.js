@@ -152,17 +152,34 @@ router.put("/mentee/:id/profile", async (req, res, next) => {
   }
 });
 
+router.get("/mentor/:id/pending-meetings", async (req, res, next) => {
+  const mentorId = req.params.id;
+  const meetings = await getPendingMeetingsForMentor(mentorId);
+  res.json(meetings);
+});
+
+router.get("/mentor/:id/past-meetings", async (req, res, next) => {
+  const mentorId = req.params.id;
+  const meetings = await getPastMeetingsForMentor(mentorId);
+  res.json(meetings);
+});
+
+router.get("/mentor/:id/upcoming-meetings", async (req, res, next) => {
+  const mentorId = req.params.id;
+  const meetings = await getUpcomingMeetingsForMentor(mentorId);
+  res.json(meetings);
+});
 
 // GET /api/users/mentor/pending-meetings
-router.get("/mentor/pending-meetings", async (req, res, next) => {
-  try {
-    const mentorId = req.user.id; ; // 
-    const meetings = await getPendingMeetingsForMentor(mentorId);
-    res.json(meetings);
-  } catch (err) {
-    next(err);
-  }
-});
+// router.get("/mentor/pending-meetings", async (req, res, next) => {
+//   try {
+//     const mentorId = req.user.id; ; // 
+//     const meetings = await getPendingMeetingsForMentor(mentorId);
+//     res.json(meetings);
+//   } catch (err) {
+//     next(err);
+//   }
+// });
 
 
 router.put("/mentor/approve-meeting", async (req, res, next) => {
@@ -177,26 +194,26 @@ router.put("/mentor/approve-meeting", async (req, res, next) => {
 
 
 // GET /api/users/mentor/past-meetings
-router.get("/mentor/past-meetings", async (req, res, next) => {
-  try {
-    const mentorId = req.user.id; ; // או 1
-    const meetings = await getPastMeetingsForMentor(mentorId);
-    res.json(meetings);
-  } catch (err) {
-    next(err);
-  }
-});
+// router.get("/mentor/past-meetings", async (req, res, next) => {
+//   try {
+//     const mentorId = req.user.id; ; // או 1
+//     const meetings = await getPastMeetingsForMentor(mentorId);
+//     res.json(meetings);
+//   } catch (err) {
+//     next(err);
+//   }
+// });
 
-// GET /api/users/mentor/upcoming-meetings
-router.get("/mentor/upcoming-meetings", async (req, res, next) => {
-  try {
-    const mentorId = req.user.id; ;
-    const meetings = await getUpcomingMeetingsForMentor(mentorId);
-    res.json(meetings);
-  } catch (err) {
-    next(err);
-  }
-});
+// // GET /api/users/mentor/upcoming-meetings
+// router.get("/mentor/upcoming-meetings", async (req, res, next) => {
+//   try {
+//     const mentorId = req.user.id; ;
+//     const meetings = await getUpcomingMeetingsForMentor(mentorId);
+//     res.json(meetings);
+//   } catch (err) {
+//     next(err);
+//   }
+// });
 
 // GET /api/users/mentor/profile
 router.get("/mentor/profile", async (req, res, next) => {

@@ -29,7 +29,9 @@ const Lessons = ({
         const endpoint =
           role === "mentee"
             ? `/api/users/mentee/${userId}/${apiPath}`
-            : `/api/users/mentor/${apiPath}`;
+            // : `/api/users/mentor/${apiPath}`;
+            : `/api/users/mentor/${userId}/${apiPath}`;
+
         const response = await axios.get(endpoint);
         setLessons(response.data);
       } catch (error) {
