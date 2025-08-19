@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import Navbar from "../components/Navbar";
 import Lessons from "../components/Lessons";
 import MenteeProfileEdit from "../components/MenteeProfileEdit";
 import ImageUploader from "../components/ImageUploader";
@@ -47,7 +46,6 @@ const MenteeProfilePage = () => {
   if (loading) {
     return (
       <>
-        <Navbar />
         <Box display="flex" justifyContent="center" mt={5}>
           <CircularProgress />
         </Box>
@@ -58,7 +56,6 @@ const MenteeProfilePage = () => {
   if (!mentee) {
     return (
       <>
-        <Navbar />
         <Box display="flex" justifyContent="center" mt={5}>
           <Typography variant="h6">Mentee profile not found.</Typography>
         </Box>
@@ -68,7 +65,6 @@ const MenteeProfilePage = () => {
 
   return (
     <>
-      <Navbar />
       <Box sx={{ maxWidth: "1000px", mx: "auto", mt: 5, px: 3 }}>
         {isEditing ? (
           <MenteeProfileEdit

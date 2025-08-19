@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import {TextField, Box, Grid, Typography, CircularProgress ,Slider, Autocomplete, Chip } from "@mui/material";
 import MentorPreviewCard from "../components/MentorPreviewCard";
-import Navbar from "../components/Navbar";
 import ClearFiltersButton from "../components/ClearFiltersButton";
 import MentorFullCard from "../components/MentorFullCard";
 
@@ -82,7 +81,6 @@ const MenteeHomePage = () => {
     
     return (
       <>
-      <Navbar/>
       <Box sx={{
         maxWidth: "1000px",
         mx: "auto",   
