@@ -96,7 +96,7 @@ const handleSubmit = async (e) => {
     {/* NEW: QueenB logo above the lock */}
     <Box
         component="img"
-        src="https://queenb.org.il/wp-content/uploads/2023/08/rainbow-1.png"
+        src="/logo.png"
         alt="QueenB logo"
         sx={{
         width: 100,                  // adjust size to taste (e.g., 80–120)
