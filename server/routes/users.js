@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const {getMentorProfile, getPastMeetingsForMentor, getUpcomingMeetingsForMentor, approveMeeting, getPendingMeetingsForMentor, listAllMentors, createMentorshipMeeting, getProfile, getMentorById, getLessonsByMenteeId , getUpcomingLessons, getPendingLessons, getUnavailableSlotsForMentor, updateMenteeProfile} = require("../services/usersService");
+const {updateMentorProfile, getMentorProfile, getPastMeetingsForMentor, getUpcomingMeetingsForMentor, approveMeeting, getPendingMeetingsForMentor, listAllMentors, createMentorshipMeeting, getProfile, getMentorById, getLessonsByMenteeId , getUpcomingLessons, getPendingLessons, getUnavailableSlotsForMentor, updateMenteeProfile} = require("../services/usersService");
 const pool = require("../db");
 const { requireAuth } = require("../middleware/auth");
 
@@ -255,7 +255,22 @@ router.get("/mentee/:id/profile", async (req, res, next) => {
     next(err);
   }
 });
+// PUT /api/users/mentor/:id/profile
+router.put("/mentor/:id/profile", async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const updatedFields = req.body;
 
+    const updatedProfile = await updateMentorProfile(id, updatedFields);
 
+    if (!updatedProfile) {
+      return res.status(404).json({ error: "Mentor not found or not updated" });
+    }
+
+    res.json(updatedProfile);
+  } catch (err) {
+    next(err);
+  }
+});
 
 module.exports = router;

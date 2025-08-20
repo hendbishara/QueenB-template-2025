@@ -8,15 +8,19 @@ import {
   Tabs,
   Tab,
   Divider,
+  IconButton,
 } from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
 import api from "../api";
 import Lessons from "../components/Lessons";
+import MentorProfileEdit from "../components/MentorProfileEdit";
 
 const MentorProfilePage = () => {
-  const { id } = useParams(); // <-- /mentor/:id/profile
+  const { id } = useParams();
   const [mentor, setMentor] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState(0);
+  const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
     const fetchMentorProfile = async () => {
@@ -32,24 +36,14 @@ const MentorProfilePage = () => {
     if (id) fetchMentorProfile();
   }, [id]);
 
-  // const handleApprove = async (menteeId, meeting_date) => {
-  //   try {
-  //     await axios.put("/api/users/mentor/approve-meeting", {
-  //       menteeId,
-  //       meetingDate: meeting_date,
-  //     });
-  //   } catch (err) {
-  //     console.error("Approval failed", err);
-  //   }
-  // };
   const handleApprove = async (menteeId, meeting_date, meeting_time) => {
     try {
-      await api.put("/api/users/mentor/approve-meeting", {
+      await api.put("/users/mentor/approve-meeting", {
         menteeId,
         meetingDate: meeting_date,
-        meetingTime: meeting_time
+        meetingTime: meeting_time,
       });
-  
+
       if (activeTab === 2) {
         setMentor((prev) => ({
           ...prev,
@@ -60,7 +54,7 @@ const MentorProfilePage = () => {
       console.error("Approval failed", err);
     }
   };
-  
+
   if (loading) {
     return (
       <>
@@ -90,26 +84,47 @@ const MentorProfilePage = () => {
             p: 3,
             borderRadius: 2,
             boxShadow: 3,
+            position: "relative",
           }}
         >
-          <Box display="flex" alignItems="center" gap={3}>
-            <Avatar
-              src={mentor.image_url}
-              alt="Mentor"
-              sx={{ width: 100, height: 100 }}
+          {isEditing ? (
+            <MentorProfileEdit
+              profile={mentor}
+              onClose={() => setIsEditing(false)}
+              onSave={(updated) => {
+                setMentor(updated);
+                setIsEditing(false);
+              }}
             />
+          ) : (
             <Box>
-              <Typography variant="h5">
-                {mentor.first_name} {mentor.last_name}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                {mentor.short_description}
-              </Typography>
-              <Typography>Email: {mentor.email}</Typography>
-              <Typography>Phone: {mentor.phone}</Typography>
-              <Typography>Region: {mentor.region}</Typography>
+              <IconButton
+                onClick={() => setIsEditing(true)}
+                sx={{ position: "absolute", top: 8, right: 8 }}
+              >
+                <EditIcon />
+              </IconButton>
+
+              <Box display="flex" alignItems="center" gap={3}>
+                <Avatar
+                  src={mentor.image_url}
+                  alt="Mentor"
+                  sx={{ width: 100, height: 100 }}
+                />
+                <Box>
+                  <Typography variant="h5">
+                    {mentor.first_name} {mentor.last_name}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    {mentor.short_description}
+                  </Typography>
+                  <Typography>Email: {mentor.email}</Typography>
+                  <Typography>Phone: {mentor.phone}</Typography>
+                  <Typography>Region: {mentor.region}</Typography>
+                </Box>
+              </Box>
             </Box>
-          </Box>
+          )}
         </Box>
 
         <Box mt={4}>
@@ -141,22 +156,20 @@ const MentorProfilePage = () => {
               apiPath="upcoming-meetings"
               emptyMessage="No upcoming meetings."
               refresh={mentor.refresh}
-
             />
           )}
 
-        {activeTab === 2 && (
+          {activeTab === 2 && (
             <Lessons
-            role="mentor"
-            userId={mentor.id}
-            apiPath="pending-meetings"
-            emptyMessage="No pending meetings."
-            showApproveButton
-            onApprove={handleApprove}
-            refresh={mentor.refresh}
-          />
-
-        )}
+              role="mentor"
+              userId={mentor.id}
+              apiPath="pending-meetings"
+              emptyMessage="No pending meetings."
+              showApproveButton
+              onApprove={handleApprove}
+              refresh={mentor.refresh}
+            />
+          )}
         </Box>
       </Box>
     </>

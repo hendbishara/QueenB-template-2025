@@ -1,3 +1,5 @@
+// components/MentorProfileEdit.jsx
+
 import React, { useState } from "react";
 import ImageUploader from "../components/ImageUploader";
 import {
@@ -13,7 +15,7 @@ import {
 } from "@mui/material";
 import api from "../api";
 
-const MenteeProfileEdit = ({ profile, onClose, onSave }) => {
+const MentorProfileEdit = ({ profile, onClose, onSave }) => {
   const [formData, setFormData] = useState({ ...profile });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
@@ -31,14 +33,14 @@ const MenteeProfileEdit = ({ profile, onClose, onSave }) => {
         Object.entries(formData).filter(([_, v]) => v !== undefined && v !== null)
       );
 
-      const url = formData.id
-      ? `/users/mentee/${formData.id}/profile`
-      : `/users/mentee/profile`;
+      const url = `/users/mentor/${formData.id}/profile`;
 
-      const response = await api.put(url, filteredData);
-      onSave(response.data);
+      await api.put(url, filteredData);
+
+      const refreshed = await api.get(url);
+      onSave(refreshed.data);
     } catch (err) {
-      console.error("Failed to update profile", err);
+      console.error("Failed to update mentor profile", err);
       setError("Failed to save changes.");
     } finally {
       setSaving(false);
@@ -48,7 +50,7 @@ const MenteeProfileEdit = ({ profile, onClose, onSave }) => {
   return (
     <Box sx={{ backgroundColor: "#fff", boxShadow: 3, borderRadius: 2, p: 4 }}>
       <Typography variant="h6" gutterBottom>
-        Edit Profile
+        Edit Mentor Profile
       </Typography>
 
       <Stack spacing={2}>
@@ -134,4 +136,4 @@ const MenteeProfileEdit = ({ profile, onClose, onSave }) => {
   );
 };
 
-export default MenteeProfileEdit;
+export default MentorProfileEdit;

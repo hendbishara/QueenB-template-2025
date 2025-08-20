@@ -320,10 +320,13 @@ async function getPastMeetingsForMentor(mentorId) {
     SELECT 
       u.first_name AS mentee_first_name,
       u.last_name AS mentee_last_name,
-      mm.meeting_date
+      DATE_FORMAT(mm.meeting_date, '%Y-%m-%d') AS meeting_date,
+      mm.meeting_time
     FROM mentorship_meetings mm
     JOIN users u ON mm.mentee_id = u.id
-    WHERE mm.mentor_id = ? AND mm.meeting_date < CURDATE() AND mm.approved = 1
+    WHERE mm.mentor_id = ? 
+      AND mm.meeting_date < CURDATE() 
+      AND mm.approved = 1
     ORDER BY mm.meeting_date DESC
     `,
     [mentorId]
@@ -334,19 +337,57 @@ async function getPastMeetingsForMentor(mentorId) {
 async function getUpcomingMeetingsForMentor(mentorId) {
   const [rows] = await pool.query(
     `
-    SELECT 
-      u.first_name AS mentee_first_name,
-      u.last_name AS mentee_last_name,
-      DATE_FORMAT(mm.meeting_date, '%Y-%m-%d') AS meeting_date
-    FROM mentorship_meetings mm
-    JOIN users u ON mm.mentee_id = u.id
-    WHERE mm.mentor_id = ? AND mm.meeting_date >= CURDATE() AND mm.approved = 1
-    ORDER BY mm.meeting_date ASC
-    `,
+SELECT 
+  u.first_name AS mentee_first_name,
+  u.last_name AS mentee_last_name,
+  DATE_FORMAT(mm.meeting_date, '%Y-%m-%d') AS meeting_date,
+  mm.meeting_time
+FROM mentorship_meetings mm
+JOIN users u ON mm.mentee_id = u.id
+WHERE mm.mentor_id = ? 
+  AND mm.meeting_date >= CURDATE() 
+  AND mm.approved = 1
+ORDER BY mm.meeting_date ASC`,
     [mentorId]
   );
   return rows;
 }
+async function updateMentorProfile(mentorId, updatedFields) {
+  const allowedFields = [
+    "first_name",
+    "last_name",
+    "email",
+    "phone",
+    "image_url",
+    "linkedin_url",
+    "short_description",
+    "region"
+  ];
+
+  const setClauses = [];
+  const values = [];
+
+  for (const field of allowedFields) {
+    if (field in updatedFields) {
+      setClauses.push(`${field} = ?`);
+      values.push(updatedFields[field]);
+    }
+  }
+
+  if (setClauses.length === 0) {
+    throw new Error("No valid fields provided for update");
+  }
+
+  const query = `
+    UPDATE users
+    SET ${setClauses.join(", ")}
+    WHERE id = ? AND mentor = 1
+  `;
+  values.push(mentorId);
+
+  await pool.query(query, values);
+  return { success: true, message: "Mentor profile updated successfully." };
+}
 
 
-module.exports = {getMentorProfile, getPastMeetingsForMentor, getUpcomingMeetingsForMentor,approveMeeting, getPendingMeetingsForMentor, listAllMentors, getMentorById, getProfile, createMentorshipMeeting,getLessonsByMenteeId, getUpcomingLessons, getPendingLessons, getUnavailableSlotsForMentor, updateMenteeProfile };
+module.exports = {getMentorProfile, getPastMeetingsForMentor, getUpcomingMeetingsForMentor,approveMeeting, getPendingMeetingsForMentor, listAllMentors, getMentorById, getProfile, createMentorshipMeeting,getLessonsByMenteeId, getUpcomingLessons, getPendingLessons, getUnavailableSlotsForMentor, updateMenteeProfile,updateMentorProfile };
