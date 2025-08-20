@@ -104,14 +104,16 @@ export default function RegistrationPage() {
         </div>
       )}
 
-      <div className="mx-auto w-full max-w-xl -mt-32">
-        <div className="flex justify-center mb-4">
-          <img
-            src="/logo.png"
-            alt="Queens Match Logo"
-            className="h-24 w-auto drop-shadow-sm"
-          />
-        </div>
+      <div className={cls("mx-auto w-full max-w-xl", role ? "mt-4" : "-mt-32")}>
+        {!role && (
+          <div className="flex justify-center mb-4">
+            <img
+              src="/logo.png"
+              alt="Queens Match Logo"
+              className="h-24 w-auto drop-shadow-sm"
+            />
+          </div>
+        )}
 
         {/* Title */}
         <div className="mb-6 text-center">
