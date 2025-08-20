@@ -42,8 +42,7 @@ router.post("/mentee/home", requireAuth, async (req, res, next) => {
 // GET /api/users/mentee/profile
 router.get("/mentee/profile", async (req, res, next) => {
   try {
-    const menteeId = req.user.id; ;//hard coded
-    // const menteeId = req.user.id; // token - mentee
+    const menteeId = req.user.id;
     const profile = await getProfile(menteeId);
     res.json(profile);
   } catch (err) {
@@ -255,6 +254,7 @@ router.get("/mentee/:id/profile", async (req, res, next) => {
     next(err);
   }
 });
+
 // PUT /api/users/mentor/:id/profile
 router.put("/mentor/:id/profile", async (req, res, next) => {
   try {

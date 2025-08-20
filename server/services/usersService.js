@@ -158,7 +158,9 @@ async function getLessonsByMenteeId(menteeId) {
       mm.meeting_time
     FROM mentorship_meetings mm
     JOIN users u ON mm.mentor_id = u.id
-    WHERE mm.mentee_id = ? AND mm.meeting_date < CURDATE() AND mm.approved = 1
+    WHERE mm.mentee_id = ? 
+      AND mm.meeting_date < CURDATE() 
+      AND mm.approved = 1
     ORDER BY mm.meeting_date DESC
     `,
     [menteeId]

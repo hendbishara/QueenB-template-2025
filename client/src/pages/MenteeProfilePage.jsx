@@ -29,9 +29,12 @@ const MenteeProfilePage = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = id
-          ? await api.get(`/users/mentee/${id}/profile`)
-          : await api.get("/users/mentee/profile");
+        const response = await api.get(
+          id ? `/users/mentee/${id}/profile` : "/users/mentee/profile"
+        );
+        // const response = id
+        //   ? await api.get(`/users/mentee/${id}/profile`)
+        //   : await api.get("/users/mentee/profile");
         setMentee(response.data);
       } catch (err) {
         console.error("Failed to fetch mentee profile", err);
