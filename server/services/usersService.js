@@ -33,19 +33,20 @@ function toMentorPreview(row) {
   };
 }
 function toMentorDetail(row) {
-    return {
-      id: row.id,
-      first_name: row.first_name,
-      last_name: row.last_name,
-      image_url: row.image_url,
-      linkedin_url: row.linkedin_url,
-      phone: row.phone,
-      email: row.email,
-      short_description: row.short_description,
-      years_experience: row.years_experience,
-      skills: row.skills ? row.skills.split(",") : []
-    };
-  }
+  return {
+    id: row.id,
+    first_name: row.first_name,
+    last_name: row.last_name,
+    image_url: row.image_url,
+    linkedin_url: row.linkedin_url,
+    phone: row.phone,
+    email: row.email,
+    short_description: row.short_description,
+    region: row.region,
+    years_experience: row.years_experience,
+    skills: row.skills ? row.skills.split(",") : []
+  };
+}
 
   async function listAllMentors(filters = {}) {
     const { name, region, skills, experience } = filters;
@@ -263,25 +264,19 @@ async function getMentorProfile(id) {
         u.phone,
         u.email,
         u.short_description,
-        u.mentor,
-        u.region
+        u.region,
+        u.years_experience,
+        GROUP_CONCAT(ms.skill_name ORDER BY ms.skill_name SEPARATOR ',') AS skills
      FROM users u
-     WHERE u.mentor = 1 AND u.id = ?`,
+     LEFT JOIN mentor_skills ms ON ms.mentor_id = u.id
+     WHERE u.mentor = 1 AND u.id = ?
+     GROUP BY u.id`,
     [id]
   );
+
   if (rows.length === 0) return null;
-  return {
-    id: rows[0].id,
-    first_name: rows[0].first_name,
-    last_name: rows[0].last_name,
-    image_url: rows[0].image_url,
-    linkedin_url: rows[0].linkedin_url,
-    phone: rows[0].phone,
-    email: rows[0].email,
-    short_description: rows[0].short_description,
-    region: rows[0].region,
-    role: "mentor"
-  };
+
+  return toMentorDetail(rows[0]);
 }
 
 async function getPendingMeetingsForMentor(mentorId) {
@@ -363,7 +358,8 @@ async function updateMentorProfile(mentorId, updatedFields) {
     "image_url",
     "linkedin_url",
     "short_description",
-    "region"
+    "region",
+    "years_experience"
   ];
 
   const setClauses = [];
@@ -376,19 +372,41 @@ async function updateMentorProfile(mentorId, updatedFields) {
     }
   }
 
-  if (setClauses.length === 0) {
-    throw new Error("No valid fields provided for update");
+  const connection = await pool.getConnection();
+  try {
+    await connection.beginTransaction();
+
+    if (setClauses.length > 0) {
+      const query = `
+        UPDATE users
+        SET ${setClauses.join(", ")}
+        WHERE id = ? AND mentor = 1
+      `;
+      values.push(mentorId);
+      await connection.query(query, values);
+    }
+
+    if ("skills" in updatedFields) {
+      await connection.query("DELETE FROM mentor_skills WHERE mentor_id = ?", [mentorId]);
+      const skills = updatedFields.skills;
+      if (Array.isArray(skills)) {
+        for (const skill of skills) {
+          await connection.query(
+            "INSERT INTO mentor_skills (mentor_id, skill_name) VALUES (?, ?)",
+            [mentorId, skill]
+          );
+        }
+      }
+    }
+
+    await connection.commit();
+    return { success: true, message: "Mentor profile updated successfully." };
+  } catch (err) {
+    await connection.rollback();
+    throw err;
+  } finally {
+    connection.release();
   }
-
-  const query = `
-    UPDATE users
-    SET ${setClauses.join(", ")}
-    WHERE id = ? AND mentor = 1
-  `;
-  values.push(mentorId);
-
-  await pool.query(query, values);
-  return { success: true, message: "Mentor profile updated successfully." };
 }
 
 

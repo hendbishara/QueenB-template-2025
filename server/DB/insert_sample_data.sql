@@ -45,3 +45,6 @@ VALUES (2, 3, DATE_ADD(CURDATE(), INTERVAL 3 DAY),1);
 ALTER TABLE mentorship_meetings
 DROP PRIMARY KEY,
 ADD PRIMARY KEY (mentee_id, mentor_id, meeting_date, meeting_time);
+
+
+SELECT * FROM mentorship_meetings WHERE mentee_id = 10;
