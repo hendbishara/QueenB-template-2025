@@ -6,7 +6,7 @@ import { useAuth } from "../auth/AuthContext";
 const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, loading } = useAuth();
+  const { user, loading, logout } = useAuth();
   if (loading) return null;
 
 
@@ -23,12 +23,17 @@ const Navbar = () => {
   const isMentorPage = /^\/mentor\/[^/]+\/profile$/.test(location.pathname);
 
 
- // Build per-ID profile path for the logged-in user
- const profilePath = user
-   ? (user.role === "MENTEE"
-       ? `/mentee/${user.id}/profile`
-       : `/mentor/${user.id}/profile`)
-   : "/login";
+  // Build per-ID profile path for the logged-in user
+  const profilePath = user
+    ? (user.role === "MENTEE"
+        ? `/mentee/${user.id}/profile`
+        : `/mentor/${user.id}/profile`)
+    : "/login";
+
+  const handleLogout = () => {
+  logout();                   // clear storage + context
+  navigate("/login", { replace: true });  // send to login
+};
 
   return (
     <AppBar
@@ -70,8 +75,7 @@ const Navbar = () => {
               </Button>
 
               <Button
-                component={Link}
-                to="/logout"
+                onClick={handleLogout}
                 sx={{ color: "#d63384", fontWeight: 600, fontSize: "1.25rem" }}
               >
                 LOGOUT
