@@ -43,3 +43,5 @@ ALTER TABLE mentorship_meetings
 MODIFY COLUMN meeting_date DATE NOT NULL;
 
 ALTER TABLE users MODIFY image_url TEXT;
+
+ALTER TABLE users MODIFY image_url MEDIUMTEXT;
